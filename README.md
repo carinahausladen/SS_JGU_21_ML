@@ -129,8 +129,7 @@ This is an application-based course, focusing on R and Python as programming lan
       * Wordfish ([Slapin (2008)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-5907.2008.00338.x))
       * Wordshoal ([Lauderdale (2016)](https://www.cambridge.org/core/journals/political-analysis/article/measuring-political-positions-from-legislative-speech/35D8B53C4B7367185325C25BBE5F42B4))
     * Measuring divisiveness in political speech ([Ash (2017)](https://www.journals.uchicago.edu/doi/full/10.1086/692587?af=R&mobileUi=0)) :teacher: 12', :technologist: 12'
-## :fox_face: Quiz time!
-:technologist: 5'
+## :fox_face: Quiz time! :technologist: 5'
     
 #  Session 2 
 
@@ -155,8 +154,7 @@ This is an application-based course, focusing on R and Python as programming lan
 * Programming language: Python (mostly [scikit-learn](https://scikit-learn.org/stable/))
 * Presentation: Chapter 2 from my [dissertation](https://kups.ub.uni-koeln.de/12231/) :teacher: 15'
 
-## :fox_face: Quiz time!
-:technologist: 10'
+## :fox_face: Quiz time! :technologist: 10'
 
 # Session 3
 
@@ -181,8 +179,7 @@ This is an application-based course, focusing on R and Python as programming lan
         * [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
         * [bagging classifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.BaggingClassifier.html)
         * [stacked generalization](https://scikit-learn.org/stable/modules/ensemble.html#stacked-generalization)
-## :fox_face: Quiz time!
-:technologist: 15'
+## :fox_face: Quiz time! :technologist: 15'
 
  # Session 4 
   * :teacher: 10', :technologist: 10'
@@ -204,8 +201,7 @@ This is an application-based course, focusing on R and Python as programming lan
 * Sentiment Analysis with LSTM :teacher: 10', :technologist: 10'
 * RCNN ([Lai et al. (2015)](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewPaper/9745)) :teacher: 10', :technologist: 10'
 
-## :fox_face: Quiz time!
-:technologist: 10'
+## :fox_face: Quiz time! :technologist: 10'
 
 # Session 5
 
@@ -228,8 +224,7 @@ This is an application-based course, focusing on R and Python as programming lan
   * Visualize high-dimensional data ([t-SNE](https://scikit-learn.org/stable/modules/manifold.html#t-sne))
   * Topic Models ([NFM](https://scikit-learn.org/stable/modules/decomposition.html#non-negative-matrix-factorization-nmf-or-nnmf), [LDA](https://scikit-learn.org/stable/modules/decomposition.html#latent-dirichlet-allocation-lda))
 
-## :fox_face: Quiz time!
-:technologist: 10'           
+## :fox_face: Quiz time! :technologist: 10'           
     
 # Acknowledgements
 
