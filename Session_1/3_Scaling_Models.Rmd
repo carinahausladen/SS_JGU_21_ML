@@ -1,0 +1,412 @@
+---
+title: "Scaling Models"
+subtitle: "Summer School JGU Mainz — Advanced Methods in Behavioral Economics, 2021"
+author: "Carina I. Hausladen"
+date: "`r Sys.Date()`"
+output:
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+bibliography: ss21.bib 
+---
+
+```{r setup, include=FALSE, cache=TRUE}
+rm(list = ls())
+library(quanteda)
+library(quanteda.textmodels)
+library(quanteda.textplots)
+library(readtext)
+library(knitr)
+library(ggplot2)
+library(gridExtra)
+library(reshape2)
+library(manifestoR)
+#devtools::install_github("hadley/emo") #uncomment if you want smileys :)!
+```
+
+
+## Methods
+In this module you will learn about three popular scaling models, predominantly used by political scientists. Those are:
+
+- Wordscore [@Laver2003]
+- Wordfish [@Slapin2008]
+- Wordshoal [@Lauderdale2016]
+
+Furthermore, we will look at how various degrees of preprocessing influence the scores of these scaling models.
+
+## Data
+
+- The [Manifesto Project](https://manifestoproject.wzb.eu/information/documents/information) analyses parties’ election manifestos in order to study parties’ policy preferences.
+- To access the data in the Manifesto Corpus, an account for the Manifesto Project webpage with an API key is required. 
+- You can create one at https://manifesto-project.wzb.eu/signup. You then can create and download the API key on your profile page. 
+```{r data, include=FALSE, cache=TRUE}
+ukm <- readtext("data/election-manifestos-uk")
+ukm.c<-corpus(ukm)
+#mp_setapikey("manifesto_apikey.txt")
+#my_corpus <- mp_corpus(countryname == "United Kingdom" & edate > as.Date("2000-01-01"))
+#ukm<-my_corpus
+```
+
+
+## Degrees of Preprocessing
+
+In the following, we generate three different degrees of preprocessing. The first dfm is subject to no preprocessing at all.
+```{r vry_prprcssng_no, include=TRUE, warning=FALSE, message=FALSE, error=FALSE, cache=TRUE}
+ukm.dfm.1 <- dfm(ukm.c)
+ukm.tm.1 <- convert(ukm.dfm.1, to = "tm")
+```
+
+Secondly, we generate a "modest" degree of preprocessing by removing punctuation and numbers as well as by stemming words. 
+```{r vry_prprcssng_modest, include=TRUE, warning=FALSE, message=FALSE, error=FALSE, cache=TRUE}
+ukm.dfm.2 <- dfm(ukm.c, remove_punct = TRUE, remove_numbers = TRUE, stem = TRUE)
+ukm.tm.2 <- convert(ukm.dfm.2, to = "tm")
+```
+
+The third dfm shows the full degree of preprocessing: On top of the steps mentioned before, we furthermore remove stopwords as well as trim the dfm of words that appeared less than five times or in less than three documents. 
+
+`r emo::ji("nerd")`: Vary term and document frequency and investigate its effects!
+```{r vry_prprcssng_full, include=TRUE, warning=FALSE, message=FALSE, error=FALSE, cache=TRUE}
+ukm.dfm.3 <- dfm(ukm.c, remove_punct=TRUE, remove_numbers=TRUE, stem=TRUE, remove=stopwords("english"))
+ukm.dfm.3 <- dfm_trim(ukm.dfm.3, min_termfreq = 5, min_doc = 3) 
+ukm.tm.3 <- convert(ukm.dfm.3, to = "tm")
+```
+
+## Describing differences between the 3 corpora
+The table summarizes descriptive values for the three different corpi that vary in their degree of preprocessing. 
+
+```{r dffrncs, echo=FALSE, cache=TRUE}
+degrees<- data.frame(matrix(ncol = 3, nrow = 4))
+rownames(degrees)<-c("Terms", "Non-/sparse entries", "Sparsity", "Maximal term length")
+colnames(degrees)<-c("no", "modest", "full")
+all<-list(ukm.tm.1,ukm.tm.2,ukm.tm.3)
+
+for(i in 1:3){
+  t<-capture.output(all[i])
+  for(j in 3:5){
+    ss<-unlist(strsplit(t[j], ":"))[2]
+    degrees[j-1,i]<-ss
+    degrees[1,i]<-dim(all[[i]])[2]
+  }
+}
+
+kable(degrees)
+
+prcnt_mdst<-round((1-(as.numeric(degrees["terms","modest"])/as.numeric(degrees["terms","no"])))*100,
+      digits = 3)
+prcnt_fll<-round((1-(as.numeric(degrees["terms","full"])/as.numeric(degrees["terms","no"])))*100,
+      digits = 3)
+```
+
+# Scaling Models
+
+## Latent variable model 
+
+$\theta->W$
+
+Typically, scaling models assume that
+
+- relative word usage is reflective of political ideology;
+- positions are unidimensional in $W$;
+- positions drive word counts stochastically according to a particular form for $P(W_j|\theta)$;
+- bag of words: counts of $W_j$ are conditionally independent given $\theta$
+
+$$
+P(W_1...W_v) = \prod_{j}^{V}P(W_j|\theta)P(\theta)
+$$
+
+## Wordscore Model
+
+Wordscores is a (supervised) scaling model for estimating the positions for dimensions that are specified a priori. The model was introduced by @Laver2003 and is widely used among political scientists.
+
+- Each word $j$ has a policy position (word score) $\pi_j$.
+- A reference document needs to be specified.
+- Document positions are averaged over its words' positions.
+
+---
+
+### Example
+- Two texts ($A$, $B$)
+- The word "summer" is used 10 times per 1000 words in text $A$ and
+30 times per 1000 words in text $B$.
+- Conditional on observing the word "summer", we read text $A$ with probability 0.25 and text B with probability 0.75.
+- Once we assign reference values to the reference texts, we can compute a "word score". 
+- Suppose reference text A has position $-1$, and text B position $+1$, the score of word "summer" is: $0.25(−1.0) + 0.75(1.0) = −0.25 + 0.75 = 0.5$
+
+
+#### @Laver2003
+
+The expert Wordscore survey estimates for 1992 can be found in @Laver2003, p.320: The score for Liberal Democrats is $8.21$, the Labour Party scores $5.35$ and the Conservatives yield a score of $17.21$.
+
+---
+
+### Run the Wordscore Model
+
+`textmodel_wordscores()` implements @Laver2003 Wordscores method.
+```{r wrdscr_mdl, include=FALSE, cache=TRUE, warning=FALSE}
+refsc <- c(17.21, NA, NA, NA, NA, NA, 5.35, NA, NA, NA, NA, NA, 8.21, NA, NA, NA, NA, NA, NA, NA)
+
+ws.1 <- textmodel_wordscores(ukm.dfm.1, refsc) 
+ws.pr.1 <- predict(ws.1, rescaling = "lbg")
+names(ws.pr.1)<-gsub("\\..*","",ukm$doc_id)
+
+ws.2 <- textmodel_wordscores(ukm.dfm.2,refsc) 
+ws.pr.2 <- predict(ws.2, rescaling = "lbg")
+names(ws.pr.2)<-gsub("\\..*","",ukm$doc_id)
+```
+
+```{r wrdscr_mdl_3, include=TRUE, cache=TRUE, warning=FALSE}
+ws.3 <- textmodel_wordscores(ukm.dfm.3,refsc) 
+ws.pr.3 <- predict(ws.3, rescaling = "lbg")
+names(ws.pr.3)<-gsub("\\..*","",ukm$doc_id)
+```
+
+---
+
+### Plotting the Document Positions
+The plots show that the ordering of the texts (based on their Wordscore) varies with the degree of preprocessing applied to the corpus. All three plots show the same top five as well as the same bottom six documents. However, the order of the documents inbetween varies. 
+```{r dcmnt_pstns_1, echo=FALSE, out.width='.32\\linewidth', fig.width=5, fig.height=2,fig.show='hold',fig.align='center', cache=TRUE, fontsize = 2}
+grid.arrange(
+textplot_scale1d(ws.pr.1) +ggtitle("No preprocessing")+theme(text=element_text(size=5)),
+textplot_scale1d(ws.pr.2) +ggtitle("Modest preprocessing")+theme(text=element_text(size=5)),
+textplot_scale1d(ws.pr.3) +ggtitle("Full preprocessing")+theme(text=element_text(size=5)), ncol=3)
+```
+
+---
+
+```{r plt_wrdscrs, include=FALSE, cache=TRUE}
+#The plot below uses the same values as the plots above but fixes the ordering of the texts. The fact that the three coloured lines are never deviating too much from each other shows that the scores by documents do not vary too much with the degree of preprocessing. There are distinct drops for labour_1992 as well as for libdem_1992. The cons_1992 value shows an opposite behavior: a significant increase in comparison to the five following values can be seen. Note that the three values just described are the values obtained by the expert survey estimates for 1992. Apart from the reference values, the scores do not vary too much over the years within the political parties (conservative, labour, libdem, ukip).
+
+ws<-as.data.frame(cbind(ws.pr.1,
+                        ws.pr.2,
+                        ws.pr.3))
+colnames(ws)<-c("No","Modest","Full")
+ws$ID<-gsub("\\..*","",ukm$doc_id)
+
+ws.l<-melt(ws, id="ID")
+ggplot(data=ws.l,
+       aes(x=ID, y=value, colour=variable, group=variable)) +
+       geom_line()+
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("")+ 
+      ggtitle("Wordscores by document")
+```
+
+### Descriptive Statistics
+
+- The table shows that the three different corpi do not vary much concerning descriptive statistics of their wordscores. 
+- The mean is the same for the not and the fully preprocessed corpi.
+- The sd does not vary at all with the degree of preprocessing. 
+- However, min and max values do vary. 
+- The min value for the raw corpus is smaller compared to the fully preprocessed corpus. 
+- The same relationship can be stated for the max value.
+```{r ws_cmprsn, echo=FALSE, cache=TRUE}  
+ws.comp <- data.frame(matrix(ncol = 3, nrow = 4))
+rownames(ws.comp)<-c("mean", "sd", "min", "max")
+colnames(ws.comp)<-c("no", "modest", "full")
+
+for(i in 1:3){
+ws.comp[1,i]<-  mean(ws[,i])
+ws.comp[2,i]<-  sd(ws[,i])
+ws.comp[3,i]<-  min(ws[,i])
+ws.comp[4,i]<-  max(ws[,i])
+}
+
+kable(round(ws.comp, digits = 2))
+```
+
+```{r density, include=FALSE, warning=FALSE, cache=TRUE}
+### Density of Wordscore Values; All three densities show a similar patters.
+df.l<-melt(ws)
+ggplot(df.l, aes(value, colour = variable)) +
+  geom_density()+
+  xlab("Wordscore")
+```
+
+---
+
+### Wordscores of Economic Terms
+We investigate the following 10 economic terms: "return", "trade", "cost", "utility", "market", "firm", "expense", "income", "cash", and "tariff".
+
+`r emo::ji("nerd")`: Think about terms that you're interested in and extract their wordscores.
+```{r economic_terms_wordcloud, include=FALSE, out.width='.32\\linewidth', fig.width=5, fig.height=2, fig.show='hold', fig.align='center', cache=TRUE}
+#The plots shows distinctively different scores for single words. It shows that the words "expense" and "utility" are no longer included in the modestly and fully preprocessed corpi. Another word that stands out is the term "firm". It shows a very high wordscore value in the raw corpus whereas the value is distincitvely lower in the modestly and fully preprocessed corpi. 
+terms<-c("return", "trade","cost", "utility","market", "firm","expense", "income",
+         "cash","tariff")
+grid.arrange(
+textplot_scale1d(ws.1, margin = "features", sort= TRUE, highlighted = terms) +ggtitle("No preprocessing"),
+textplot_scale1d(ws.2, margin = "features", sort= TRUE, highlighted = terms) +ggtitle("Modest preprocessing"),
+textplot_scale1d(ws.3, margin = "features", sort= TRUE, highlighted = terms) +ggtitle("Full preprocessing"), ncol=3)
+```
+
+```{r economic_terms_barplot,echo=FALSE, out.width='.32\\linewidth', fig.width=5, fig.height=2, fig.show='hold', fig.align='center', cache=TRUE, warning=FALSE}
+cdf<-as.data.frame(cbind(terms,
+                         ws.1[["wordscores"]][terms],
+                         ws.2[["wordscores"]][terms],
+                         ws.3[["wordscores"]][terms]))
+colnames(cdf)<-c("terms","No", "Modest", "Full")
+cdf.l<-melt(cdf, id.vars=c("terms"))  
+cdf.l$value<-as.numeric(cdf.l$value)
+
+ggplot(cdf.l, aes(fill=variable, y=value, x=terms)) + 
+      geom_bar(position="dodge", stat="identity") + 
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("") + ylab("score")
+```
+
+
+## Wordfish Model
+
+### Theory
+@Slapin2008
+
+- Unsupervised scaling
+- No reference texts
+- More similarity to item response models (e.g. NOMINATE for roll call voting). 
+- The position word relationship is:
+
+$W_{ij} ∼ Poisson(\mu_{ij})$ 
+
+$log(\mu_{ij}) = \psi_j +\beta_j \theta_i + \alpha_i$
+
+- Each word is a Poisson Process (stochastic component) driven by word and document parameters (the systematic component)
+- Word parameters:
+  - $\beta$ how fast counts increase or decrease with changes in position
+  - $\psi$ how frequent words are irrespective of position
+
+---
+
+### Estimation
+
+Wordfish models are fit using Conditional Maximum Likelihood (regression without independent variables).
+
+Iterate:
+
+- Fix document parameters ($\alpha$ and $\theta$) and maximize word parameters ($\beta$ and $\psi$)
+- Fix new word parameters ($\beta$ and $\psi$) and maximize document parameters ($\alpha$ and $\theta$)
+- This can be quite slow depending on the size of your dataset
+
+---
+
+### Model Identification
+
+$log(\mu_{ij}) = \psi_j +\beta_j \theta_i + \alpha_i$
+
+- As is the case with all scaling models (e.g. NOMINATE), the likelihood function is not identified. Without fixing some parameters, there are infinite combinations of $\theta$ and $\beta$, which could provide the same likelihood (we would not arrive at a unique solution).
+- Solution 
+
+  - Fix mean of document positions $\theta$ to $0$ and $sd=1$. 
+  - Set one document fixed effect to $0$
+  - Set directionality of scale. This means that you cannot directly compare estimates ACROSS different estimations.
+
+### What is $\theta$?
+
+- Whatever maximizes the Likelihood
+- Approximately the first principal component of log $W$
+- Like all scaling techniques (e.g. NOMINATE by @Poole1985), Wordfish is exploratory — you have to figure out what the dimension really is. This is the reason why you need to think about your data before applying the method.
+
+---
+
+### Run Wordfish Model
+
+Before running the Wordfish model, I specify the direction of the scale. I define the `UKIP_2015` as the most right position whereas `LIBDEM_1992` is defined as the most left position.
+```{r wordfish_model, include=TRUE, cache=TRUE}
+wf.1 <- textmodel_wordfish(ukm.dfm.1,dir=c(13,20))
+```
+
+```{r wordfish_model_2, include=FALSE, cache=TRUE}
+wf.1[["docs"]]<-gsub("\\..*","",ukm$doc_id)
+
+wf.2 <- textmodel_wordfish(ukm.dfm.2,dir=c(13,20))
+wf.2[["docs"]]<-gsub("\\..*","",ukm$doc_id)
+
+wf.3 <- textmodel_wordfish(ukm.dfm.3,dir=c(13,20))
+wf.3[["docs"]]<-gsub("\\..*","",ukm$doc_id)
+```
+
+```{r wordfish_plot, include=FALSE, cache=TRUE}
+#The plot below uses the same values as the plots above, however the ordering of the texts is fixed. Apart from the first two documents and the last two LIBDEM documents, the green and the blue lines show close values for each of the documents. The red line assignes significantly different values than the other two lines to the LIBDEM 1992 to 2005 documents. When looking at the blue line in particular the movement within the CONS, LABOUR and LIBDEM block shows a similar pattern: Scores show a small variance for the 1992 to 2010 texts, whereas the 2015 text strikes. This strike is the synonym for the jump experienced in the plot for the fully preporcessed model above.
+wf<-as.data.frame(cbind(wf.1[["theta"]],
+                        wf.2[["theta"]],
+                        wf.3[["theta"]]))
+colnames(wf)<-c("No","Modest","Full")
+wf$ID<-gsub("\\..*","",ukm$doc_id)
+wf.l<-melt(wf)
+ggplot(data=wf.l,
+       aes(x=ID, y=value, colour=variable, group=variable)) +
+       geom_line()+
+       theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("")+ 
+       ggtitle("Wordfish values per document")
+
+```
+
+---
+
+### Compare Wordfish Scores
+
+The three plots below sort the documents by their wordfish scores. The ordering varies tremendously, depending on the degree of preprocessing. Only the top two and the bottom document stay the same whereas the order of all documents between them varies.
+
+```{r compare_wordfish,echo=FALSE, out.width='.32\\linewidth', fig.width=4.5, fig.height=2,fig.show='hold',fig.align='center', cache=TRUE}
+# The UKIP party is correctly assigned to the right end of the political distribution. However, the fully preprocessed model assigns some texts of the conservative party at the left side of the political distribution to which this party clearly does not belong.Another interesting pattern of the fully preprocessed model is that there is a jump for the positions of the documents of the year 2015 as compared to older documents. The values for the older documents are all below 0 whereas the values of the 2015 documents are all above 1. This jump does not exist in the graphs for the no and modestly preprocessed dfms.In the fully preprocessed model, the ordering of the texts seems to be independent of the political party for texts with scores below 0. The ordering for the texts with thetas above 1 however perfectly assigns the liberal democrats to the left side of the political spectrum and the UKIP to the right side.
+
+grid.arrange(
+textplot_scale1d(wf.1) +ggtitle("No preprocessing")+theme(text=element_text(size=5)),
+textplot_scale1d(wf.2) +ggtitle("Modest preprocessing")+theme(text=element_text(size=5)),
+textplot_scale1d(wf.3) +ggtitle("Full preprocessing")+theme(text=element_text(size=5)), ncol=3)
+```
+
+## Compare Wordfish to Wordscore 
+The variation of the wordfish-scores is more dependent on the degree of preprocessing than the wordscore values are.
+A distinct pattern of the wordscore plot is that the reference values appear as distinct rises or drops. Such a pattern is no longer observed in the wordfish graph because this model does not use reference texts. However, instead of spiking at reference values, the fully preprocessed wordfish model spikes at very recent texts, independent of the political direction. Such a distinctive time trend is not present in the wordscore model.
+```{r comparison_score_fish, echo=FALSE, out.width='.49\\linewidth', fig.width=5, fig.height=2,fig.show='hold',fig.align='center', cache=TRUE}
+grid.arrange(
+ggplot(ws.l,
+     aes(x=ID, y=value, colour=variable, group = variable)) +
+     geom_line()+
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("")+ 
+     ggtitle("Wordscore")+ 
+     theme(legend.position="none")+theme(text=element_text(size=5)),
+ggplot(wf.l,
+   aes(x=ID, y=value, colour=variable, group = variable)) +
+   geom_line()+
+   theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("")+ 
+   ggtitle("Wordfish")+ 
+   theme(legend.position="none")+theme(text=element_text(size=5)), ncol=2)
+```
+
+## Compare Wordfish to Wordscore 
+
+The graphs below show that the wordfish model only performs well in ordering the parties on a political spectrum for recent texts (documents from the year 2015). The ordering of older texts seems to be arbitrary. The wordscore model on the contrary correctly assigns texts as right or left wing independent of the year.
+```{r comparison_score_fish2, echo=FALSE, out.width='.49\\linewidth', fig.width=5, fig.height=2,fig.show='hold',fig.align='center', cache=TRUE}
+grid.arrange(
+  textplot_scale1d(ws.pr.3) +ggtitle("Wordscore")+theme(text=element_text(size=5)),
+  textplot_scale1d(wf.3) +ggtitle("Wordfish")+theme(text=element_text(size=5)), ncol=2)
+```
+
+## Wordshoal
+
+- An extension of Wordfish specifically for legislative debates. 
+- Goal: estimate legislator positions.
+- Step 1: debate-level scaling model: Wordfish.
+These are debate specific estimates that are not comparable.
+- Step 2: treat estimates as data and use factor analysis to aggregate them into one or more general latent positions for each legislator.
+- Not all legislators speak, so simple factor analysis that requires complete matrix do not apply. 
+- Alternative: Bayesian treatment of linear factor model.
+- Assumption: Missing debate specific positions for legislators are missing at random and unrelated to their decision to participate in debate.
+
+## Critique
+
+@Bruinsma2019 criticize the wordscore model
+
+- scale the Euromanifestos of 117 political parties across 23 countries on 4 salient dimensions of political conflict
+- assess validity 
+  - by comparing the Wordscores estimates to expert surveys and other judgmental measures, 
+  - by examining the Wordscores’s estimates ability to predict party membership in the European Parliament groups. 
+- find that the Wordscores estimates correlate poorly with expert and judgmental measures of party positions
+- conclude that Wordscores does not live up to its original claim of a "quick and easy" language blind method
+
+
+## Summary
+
+In this module you learned about three different scaling models. 
+
+`r emo::ji("nerd")`: Summarize (in easy terms!) the key differences between Wordscores, Wordfish, and Wordshoal.
+
+## References

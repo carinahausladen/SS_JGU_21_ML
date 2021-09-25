@@ -1,0 +1,347 @@
+---
+title: "Classification"
+subtitle: "Summer School JGU Mainz — Advanced Methods in Behavioral Economics, 2021"
+author: "Carina I. Hausladen"
+date: "`r Sys.Date()`"
+output:
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+bibliography: ss21.bib 
+---
+
+```{r setup, include=FALSE, cache=TRUE}
+rm(list = ls())
+library(quanteda)
+library(quanteda.textmodels)
+library(caret)
+library(devtools)
+library(quantedaData)
+library(ggplot2)
+library(readtext)
+library(XML)
+library(stringr)
+library(lubridate)
+library(sampling)
+library(reshape2)
+library(knitr)
+library(e1071)
+```
+
+## Methods
+In this tutorial you will learn about:
+
+* Train/Test split
+* Naive Bayes Classifier 
+* Importance of sampling
+* Evaluation metrics
+
+## Data
+- We use a corpus of article titles and descriptions from the [New York Times front pages](http://www.amber-boydstun.com/supplementary-information-for-making-the-news.html). 
+- Our classification goal is to assign the story to a class of subject category.
+
+```{r df, include=FALSE, cache=TRUE}
+nytfrontpage <- readtext("data/nytfrontpage.csv")
+summary(nytfrontpage, 5)
+```
+
+```{r construct_corpus, include=FALSE, cache=TRUE}
+#The category "Arts and Entertainment" (category 23) only has 4 entries and is therefore excluded from the corpus. If I included this category, the classifier would assign high weights to those words that are in the texts assigned to this small category. As soon as the same words appear in a text that actually is assigned to another category the classifier would be very likely to assign this text to the wrong category. 
+
+topicareas <- as.numeric(names(table(nytfrontpage$majortopic)[table(nytfrontpage$majortopic)>10]))
+nytfrontpage2 <- subset(nytfrontpage, nytfrontpage$majortopic %in% topicareas)
+nytfrontpage2$majortopic <- as.factor(nytfrontpage2$majortopic)
+
+text<-paste(nytfrontpage2$title, nytfrontpage2$description, sep=" ")
+names<-c("Macroeconomics", "Civil Rights","Health","Agriculture","Labor",
+         "Education","Environment", "Energy","Immigration", "Transportation",
+         "Law","Social Welfare","Community","Banking","Defense", "Space",
+         "Trade","International Affairs","Government Operations",
+         "Public Lands","Administration","Weather","Fires","Undefined","Sports",
+         "Death","Churches", "Other")
+nytfrontpage2$majortopic.text<-factor(nytfrontpage2$majortopic, 
+                                     levels = sort(unique(nytfrontpage2$majortopic)), 
+                                     labels = names)
+
+corpus.nyt<-corpus(text)
+docvars(corpus.nyt,"doc_id")          <- 1:dim(nytfrontpage2)[1]
+docvars(corpus.nyt,"majortopic")      <- nytfrontpage2$majortopic
+docvars(corpus.nyt,"majortopic.text") <- nytfrontpage2$majortopic.text
+```
+
+```{r dscrb, echo=FALSE, out.width='.32\\linewidth', fig.width=5, fig.height=1.85, fig.show='hold',fig.align='center', cache=TRUE}
+y<-table(docvars(corpus.nyt,"majortopic.text"))
+ggplot(as.data.frame(y), 
+       aes(x = reorder(Var1, Freq), y = Freq)) + geom_bar(stat="identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1, size=6)) + theme(axis.text.y = element_text(size=6)) + theme(axis.title=element_text(size=6))  + labs(x = "Categories", y = "Absolute Frequency", size=6)
+```
+
+The corpus consists of `r dim(nytfrontpage)[1]` documents and `r length(unique(nytfrontpage$majortopic))` topics.
+
+## Train-test split
+
+[Jason Prownlee](https://machinelearningmastery.com/train-test-split-for-evaluating-machine-learning-algorithms/)
+
+- The train-test split is a technique for evaluating the performance of a machine learning algorithm.
+- It can be used for classification or regression problems and can be used for any supervised learning algorithm.
+- Train Dataset: Used to fit the machine learning model.
+- Test Dataset: Used to evaluate the fit machine learning model. The objective is to estimate the performance of the machine learning model on new data: data not used to train the model.
+
+In our example: The trainingset consists of 3584 randomly sampled documents.
+```{r train, include=TRUE, cache=TRUE}
+set.seed(42)
+train <- sample(1:5000, 3584, replace = FALSE)
+head(train, 10)
+
+3584/dim(nytfrontpage)[1]
+```
+
+```{r train_tokens, include=FALSE, error=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+# create docvar with ID
+corpus.nyt$id_numeric <- 1:ndoc(corpus.nyt)
+
+# tokenize texts
+toks_nyt <- tokens(corpus.nyt, remove_punct = TRUE, remove_number = TRUE) %>% 
+               tokens_remove(pattern = stopwords("en")) %>% 
+               tokens_wordstem()
+dfmt_nyt <- dfm(toks_nyt)
+
+# get training set
+dfmat_training <- dfm_subset(dfmt_nyt, id_numeric %in% train)
+
+# get test set (documents not in id_train)
+dfmat_test <- dfm_subset(dfmt_nyt, !id_numeric %in% train)
+```
+
+## Naive Bayes Classifier
+
+### Theory
+@Jurafsky2018
+
+- A Naive Bayesian classifier  makes a simplifying (naive) assumption about how the features interact.
+- We represent a text document as if it was a bag-of-words.
+- "I love this movie" and "I would recommend it" --> "I" occurred 2 times, "movie" 1 time, ...
+- NB is a probabilistic classifier.
+
+---
+
+### Train the model
+[quanteda tutorial](https://tutorials.quanteda.io/machine-learning/nb/)
+
+Next, we train the Naive Bayes classifier.
+```{r nb, include=TRUE, error=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+tmod_nb <- textmodel_nb(dfmat_training, dfmat_training$majortopic)
+```
+
+
+## Evaluation
+
+### Confusion Matrix
+
+- The diagonal elements of a confusion matrix represent the number of points for which the predicted label is equal to the true label.
+- The off-diagonal elements are those that are mislabeled by the classifier. 
+- The higher the diagonal values of the confusion matrix the better, indicating many correct predictions.
+
+```{r cnfsn_mtrx, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+dfmat_matched <- dfm_match(dfmat_test, features = featnames(dfmat_training))
+actual_class <- dfmat_matched$majortopic
+predicted_class <- predict(tmod_nb, newdata = dfmat_matched)
+conftable <- table(actual_class, predicted_class)
+conftable[1:10,1:10]
+```
+
+---
+
+We can also use the function `confusionMatrix()` to assess the performance of the classification.
+```{r cnfsn_mtrx_kable, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+kable(round(confusionMatrix(conftable)[["overall"]], digits=2))
+```
+
+## Metrics
+
+- In order to evaluate the classifier, we calculate the metrics accuracy, precision and recall.
+- Accuracy measures the fraction of all predictions that are correct.
+- Precision: Out of the documents that the model predicts as category "Defense", what is the fraction actually in the category "Defense"? 
+- Recall: What is fraction of documents in the category "Defense" that is correctly identified? 
+
+```{r calc_mtrcs, include=FALSE, cache=TRUE}
+Accuracy = sum(diag(conftable))/sum(conftable)
+
+Precision<-c()
+for(i in 1:dim(conftable)[1]){
+  Precision[i] = diag(conftable)[i]/sum(conftable[,i])
+}
+
+Recall<-c()
+for(i in 1:dim(conftable)[1]){
+  Recall[i] = diag(conftable)[i]/sum(conftable[i,], na.rm = TRUE)
+}
+
+Macro_average_precision = mean(Precision, na.rm = TRUE)  
+Macro_average_recall = mean(Recall, na.rm = TRUE)  
+```
+
+```{r names2, include=FALSE, cache=TRUE}
+names2<-c("Macroeconomics","Civil Rights","Health","Agriculture","Labor and Employment","Education","Environment","Energy","Immigration","Transportation","Law, Crime","Social Welfare","Community Development","Banking","Defense","Space, Science, Technology","Foreign Trade","International Affairs","Government Operations","Public Lands","State and Local Government","Weather","Fires","Other","Sports and Recreation","Death Notices","Churches and Religion","Other, Miscellaneous")
+```
+
+```{r print_mtrcs, include=FALSE, warning=FALSE, cache=TRUE}
+nv<-as.data.frame(cbind(c("Accuracy", "Macro Average Perecision", "Macro Average Recall"),
+                          round(c(Accuracy, Macro_average_precision, Macro_average_recall), digits = 2)))
+colnames(nv)<-c("Metric", "Value")
+kable(nv)
+```
+
+```{r plt_mtrcs, echo=FALSE, fig.align='center', fig.height=3.5, cache=TRUE}
+d<-as.data.frame(cbind(as.numeric(rownames(conftable)), as.numeric(Precision), as.numeric(Recall)))
+colnames(d)<-c("Class","Precision", "Recall")
+d$majortopic.text<-factor(d$Class, levels = sort(d$Class), labels = names2)
+d.long<-melt(d, id.vars=c("Class", "majortopic.text"))
+
+ggplot(d.long, aes(fill=variable, y=value, x=reorder(majortopic.text, value))) + 
+  geom_bar(position="dodge", stat="identity")+ 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+  xlab("")
+  
+```
+
+
+# Investigate poor classification
+
+```{r poor_clf, include=FALSE, cache=TRUE}
+## The table below shows those categories that perform below both: macro average precision and recall. 
+d[,c(2,3)]<-round(d[,c(2,3)], digits=2)
+d2<-d[d$Recall<Macro_average_recall & d$Precision<Macro_average_precision,c(2:4)]
+colnames(d2)[3]<-"Topic"
+kable(d2[order(d2$Precision),],row.names=FALSE)
+```
+
+## Correlation with sample size
+In order to find out why the classifier performs poorly for certain classes, we plot the share of category in the whole sample size against precision/recall. 
+```{r correlation, echo=FALSE,fig.align='center', cache=TRUE}
+ss<-as.data.frame(as.matrix(table(docvars(dfmat_training, "majortopic"))))
+d$samplesize <- ss[match(d$Class, rownames(ss)),1]
+d$samplesize.share<-c()
+for(i in 1:length(d$samplesize)){
+  d$samplesize.share[i] <- d$samplesize[i]/ sum(d$samplesize)
+}
+
+  {plot(d$samplesize.share, d$Precision, ylab = "Precision", xlab = "Share of Category within Sample", pch=20, main="Precision")
+  abline(lm(d$Precision~d$samplesize.share))}
+```
+
+```{r correlation_recall, include=FALSE,fig.align='center', cache=TRUE}
+  {plot(d$samplesize.share, d$Recall, ylab = "Recall", xlab = "Share of Category within Sample", pch=20, main="Recall")
+  abline(lm(d$Recall~d$samplesize.share))}
+```
+
+## Is the trainingset balanced?
+
+The barplot shows that the trainingset is heavily unbalanced.
+The categories are far away from being uniformly distributed nor are the category sizes in the sample the same size as in the original data set.
+
+```{r split, echo=FALSE,fig.align='center', cache=TRUE}
+tss<-as.data.frame(as.matrix(table(nytfrontpage2$majortopic)/sum(table(nytfrontpage2$majortopic))))
+d$shares <- tss[match(d$Class, rownames(tss)),1]
+colnames(d)[c(6,7)]<-c("Share Sample", "Share Original")
+d.long<-melt(d[,c(4,6,7)], id.vars=c("majortopic.text"))
+
+ggplot(d.long, aes(fill=variable, y=value, x=reorder(majortopic.text, value))) + 
+      geom_bar(position="dodge", stat="identity") + 
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("") + ylab("Share")
+```
+
+
+## Generate a balanced subset
+We generate two different balanced subsets. 
+
+### Stratification
+
+- Stratification is the process of dividing members of the population into homogeneous subgroups before sampling. 
+- Then simple random sampling or systematic sampling is applied within each stratum. 
+```{r stratification, include=FALSE, cache=TRUE}
+f<-as.data.frame(unique(nytfrontpage2$majortopic))
+f$count<-c(1:28)
+for(i in 1:dim(f)[1]){ # count how often a specific topic is present in the df
+  fd<-f[i,1]
+  f[i,2]<-table(nytfrontpage2$majortopic==fd)[2]
+}
+
+ss<-min(table(nytfrontpage2$majortopic))*length(table(nytfrontpage2$majortopic)) #sample size: 3584
+bins_strat<-as.vector((f$count/sum(f$count))*ss)
+```
+
+### Uniform distribution
+Second, we assure balance via a uniform distribution.
+```{r uniform, include=FALSE, cache=TRUE}
+bins_uniform<-rep(min(table(nytfrontpage2$majortopic)), dim(f)[1])
+```
+
+```{r both, include=FALSE, cache=TRUE}
+bins<-as.data.frame(cbind(bins_strat, bins_uniform))
+colnames(bins)<-c("Stratification", "Uniform")
+```
+
+## Run NB Classifier with different samples and evaluate
+
+`r emo::ji("nerd")`: Investigate the resulting table and plots and compare them to the outcomes of the randomly sampled training set!
+
+```{r cmpr_sampling, results='asis', include=FALSE, warning=FALSE, message=FALSE, error=FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3,fig.show='hold',fig.align='center', cache=TRUE}
+for(q in 1:2){
+  set.seed(42)
+  s2<-strata(nytfrontpage2,"majortopic", size=bins[,q], method="srswor")
+
+  #train test split
+  corpus.nyt$id_numeric <- 1:ndoc(corpus.nyt)
+  toks_nyt <- tokens(corpus.nyt, remove_punct = TRUE, remove_number = TRUE) %>% 
+                 tokens_remove(pattern = stopwords("en")) %>% 
+                 tokens_wordstem()
+  dfmt_nyt <- dfm(toks_nyt)
+  dfmat_training <- dfm_subset(dfmt_nyt, id_numeric %in% s2$ID_unit)
+  dfmat_test <- dfm_subset(dfmt_nyt, !id_numeric %in% s2$ID_unit)
+  
+  tmod_nb <- textmodel_nb(dfmat_training, dfmat_training$majortopic)
+  dfmat_matched <- dfm_match(dfmat_test, features = featnames(dfmat_training))
+  
+  #confusion matrix
+  actual_class <- dfmat_matched$majortopic
+  predicted_class <- predict(tmod_nb, newdata = dfmat_matched)
+  conftable <- table(actual_class, predicted_class)
+  kable(round(confusionMatrix(conftable)[["overall"]], digits=2))
+
+  #metrics
+  Accuracy = sum(diag(conftable))/sum(conftable)
+  Precision<-c()
+  for(i in 1:dim(conftable)[1]){
+    Precision[i] = diag(conftable)[i]/sum(conftable[,i])
+  }
+  Macro_average_precision = mean(Precision, na.rm = TRUE)
+  Recall<-c()
+  for(i in 1:dim(conftable)[1]){
+    Recall[i] = diag(conftable)[i]/sum(conftable[i,])
+  }
+  Macro_average_recall = mean(Recall, na.rm = TRUE)
+
+#PLOTS
+
+#Single Values
+  nv<-as.data.frame(cbind(c("Accuracy", "Macro Average Perecision", "Macro Average Recall"),
+                          round(c(Accuracy, Macro_average_precision, Macro_average_recall), digits=2)))
+  colnames(nv)<-c("Metrics", "Value")
+  print(kable(nv))
+
+  #plot Precision and Recall
+  d<-as.data.frame(cbind(as.numeric(rownames(conftable)), as.numeric(Precision), as.numeric(Recall)))
+  colnames(d)<-c("Class","Precision", "Recall")
+  d$majortopic.text<-factor(d$Class, levels = sort(d$Class), labels = names2)
+  d.long<-melt(d, id.vars=c("Class", "majortopic.text"))
+  
+  print(ggplot(d.long, aes(fill=variable, y=value, x=reorder(majortopic.text, value))) + 
+    geom_bar(position="dodge", stat="identity")+ 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+    xlab("")+ 
+    geom_hline(yintercept = Macro_average_precision, color="green")+ 
+    geom_hline(yintercept = Macro_average_recall, color="blue"))
+}
+```
+
+# References

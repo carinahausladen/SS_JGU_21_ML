@@ -1,0 +1,542 @@
+---
+title: "Political Speech and Divisiveness"
+subtitle: "Summer School JGU Mainz — Advanced Methods in Behavioral Economics, 2021"
+author: "Carina I. Hausladen"
+date: "`r Sys.Date()`"
+output:
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+bibliography: ss21.bib 
+---
+
+```{r setup, include=FALSE, cache=TRUE}
+rm(list = ls())
+knitr::opts_chunk$set(echo = FALSE)
+
+library(quanteda)
+library(ggplot2)
+library(readtext)
+library(readr)
+library(dplyr)
+library(lfe)
+library(stargazer)
+library(Rmisc)
+library(knitr)
+library(vroom)
+
+substrRight <- function(x, n){ #function to extract part of strings
+substr(x, nchar(x)-n+1, nchar(x))
+}
+```
+
+
+# Political Speech and Divisiveness
+"Most citizens want a secure country, safe neighborhoods and good schools. 
+These issues do get discussed, of course, but a disproportionate amount of attention goes to issues like abortion, medical marijuana, and other narrow issues that simply do not motivate the great majority." @Fiorina2005, p. 202).
+
+
+## Introduction 
+
+- @Ash2017 use floor speeches by Members of the U.S. Congress and find that U.S. Senators spend more time on divisive issues when they are up for election. 
+- In this module, we will apply the model to the context of German politics. 
+- We use speech data from the German Bundestag, whereby we will investigate the impact of the election on September 22nd 2013.
+
+## Research Question and Hypothesis
+
+### Research question: 
+Do German politicians use more divisive language as soon as elections are close?
+
+### Hypothesis
+Greater posturing through divisive language is expected when electoral concerns are stronger.
+
+## What is divisiveness?
+- When voters are uncertain about an incumbent's preferences, there is a pervasive incentive to "posture" by spending too much time on divisive issues (which are more informative about a politician's preferences)
+- This is at the expense of time spent on common-values issues (which provide greater benefit to voters). 
+
+## Dataset
+
+- The raw text of the record from the German Bundestag can be obtained from the [official homepage](https://www.bundestag.de/dokumente/protokolle/plenarprotokolle). 
+- The text on each page of each document is split into two columns which is not correctly detected by the r function "readtext()". 
+[Data in txt-format](https://www.bundestag.de/dokumente/protokolle/plenarprotokolle/plenarprotokolle) is available on the official homepage of the Bundestag only from 2013 to 2018. 
+- The website [offenesparlament.de](https://github.com/Datenschule/plpr-scraper/tree/master/data/txt) offers txt-data from 2009 to 2015. 
+- As this was the most complete dataset available, I chose to analyze this set of texts.
+Parsed and preprocessed .csv files are available [here](https://github.com/bundestag/plpr-scraper) and [here](https://github.com/sebas-seck/plpr-scraper).
+
+```{r prpr_df, echo=FALSE, cache=TRUE}
+temp = list.files(path="data/prtkll/18WP/csv",
+                  pattern="*.csv")
+txt_18 = do.call(rbind, lapply(temp, function(x) read.csv(paste("data/prtkll/18WP/csv/",x,sep=""),
+                                                       comment.char="#",
+                                                       stringsAsFactors = FALSE)))
+
+temp = list.files(path="data/prtkll/17WP/csv",
+                  pattern="*.csv")
+txt_17 = do.call(rbind, lapply(temp, function(x) read.csv(paste("data/prtkll/17WP/csv/",x,sep=""),
+                                                       comment.char="#",
+                                                       stringsAsFactors = FALSE)))
+print(dim(txt_17))
+print(head(txt_17))
+```
+
+## Choosing two parties
+
+- The divisiveness measure used by @Ash2017 is tailored to a two-party system. 
+- Unlike the U.S. political system, the German parliament consists of more than two parties, therefore a multidimensional approach to measure divisiveness would be needed. 
+- To keep it simple, we'll work with a two-dimensional approach in this tutorial. Therefore, we subset the dataset, including those two parties for which the most speech data is recorded: CDU/CSU and the SPD.
+```{r select_speech, include=FALSE, cache=TRUE}
+txt2<-txt_17[txt_17$type=="speech",] #select type
+```
+
+```{r select_party, include=TRUE, cache=TRUE}
+dim(txt2)[1]
+txt2<-txt2[txt2$speaker_party =="spd" | txt2$speaker_party =="cducsu",]
+dim(txt2)[1]
+```
+
+```{r preprocess_df, include=FALSE, cache=TRUE}
+txt2<-txt2[,c("text", "speaker_party", "speaker_fp", "wahlperiode", "sitzung")]
+
+txt3<-txt_18[txt_18$type=="speech",] #select type
+txt3<-txt3[txt3$speaker_party =="spd" | txt3$speaker_party =="cducsu",] #select party
+
+txt3<-txt3[,c("text", "speaker_party", "speaker_fp", "wahlperiode", "sitzung")] 
+txt2<-rbind(txt2,txt3)
+
+txt2<-txt2[complete.cases(txt2), ] #no NAs
+```
+
+## The Election Treatment
+$E_{it}$ represents the election treatment, which equals $1$ for the first and $4$ for the last year of the "Legislaturperiode" (currently up for election).
+
+election: 27.09.2009 <br>
+
+|$E_{it}=1$ | 10.2009-10.2010 |
+|$E_{it}=2$ | 11.2010-10.2011 |
+|$E_{it}=3$ | 11.2011-10.2012 |
+|$E_{it}=4$ | 11.2012-09.2013 |
+
+election: 22.09.2013 <br>
+
+|$E_{it}=1$ | 10.2013-10.2014 | 
+|$E_{it}=2$ | 11.2014-10.2015 | 
+|$E_{it}=3$ | 11.2015-10.2016 |  
+|$E_{it}=4$ | 11.2016-09.2017 |  
+
+election: 24.09.2017   
+
+```{r year, include=FALSE, cache=TRUE}
+#year
+  txt2$wahlperiode<-as.numeric(txt2$wahlperiode)
+  txt2$sitzung<-as.numeric(txt2$sitzung)
+  txt2$year<-1:dim(txt2)[1]
+  
+  txt2[txt2$wahlperiode=="17" & txt2$sitzung > 0   & txt2$sitzung < 10  , "year"] <-1
+  txt2[txt2$wahlperiode=="17" & txt2$sitzung > 66  & txt2$sitzung < 76 , "year"] <-2
+  txt2[txt2$wahlperiode=="17" & txt2$sitzung > 135 & txt2$sitzung < 145 , "year"] <-3
+  txt2[txt2$wahlperiode=="17" & txt2$sitzung > 201 & txt2$sitzung < 211 , "year"] <-4
+  
+  txt2[txt2$wahlperiode=="18" & txt2$sitzung > 0   & txt2$sitzung < 10  , "year"] <-5
+  txt2[txt2$wahlperiode=="18" & txt2$sitzung > 60  & txt2$sitzung < 70 , "year"] <-6
+  txt2[txt2$wahlperiode=="18" & txt2$sitzung > 130 & txt2$sitzung < 140 , "year"] <-7
+  txt2[txt2$wahlperiode=="18" & txt2$sitzung > 196 & txt2$sitzung < 206 , "year"] <-8
+
+  txt2$E_jt<-c(10)
+  txt2[txt2$wahlperiode=="17" & txt2$sitzung > 0   & txt2$sitzung < 10  , "E_jt"] <-1
+  txt2[txt2$wahlperiode=="17" & txt2$sitzung > 66  & txt2$sitzung < 76 , "E_jt"] <-2
+  txt2[txt2$wahlperiode=="17" & txt2$sitzung > 135 & txt2$sitzung < 145 , "E_jt"] <-3
+  txt2[txt2$wahlperiode=="17" & txt2$sitzung > 201 & txt2$sitzung < 211 , "E_jt"] <-4
+  
+  txt2[txt2$wahlperiode=="18" & txt2$sitzung > 0   & txt2$sitzung < 10  , "E_jt"] <-1
+  txt2[txt2$wahlperiode=="18" & txt2$sitzung > 60  & txt2$sitzung < 70 , "E_jt"] <-2
+  txt2[txt2$wahlperiode=="18" & txt2$sitzung > 130 & txt2$sitzung < 140 , "E_jt"] <-3
+  txt2[txt2$wahlperiode=="18" & txt2$sitzung > 196 & txt2$sitzung < 206 , "E_jt"] <-4
+  
+txt2<-select(txt2, -wahlperiode)
+txt2<-select(txt2, -sitzung)
+txt2<-txt2[!txt2$E_jt==10,]
+
+print(table(txt2$E_jt))
+
+rm(txt_17)
+rm(txt_18)
+```
+
+
+## Select Speaker
+In the next step, we reduce the number of speakers: <br>
+Only politicians who spoke in all four years and from whom enough speech data (more than 500 sentences) are available, are included.
+```{r speaker, echo=FALSE, cache=TRUE}
+#speaker that spoke in all four years of a session (E_ij=1:4)
+txt2_t <- aggregate(text ~ E_jt + speaker_fp, #group speeches by E_jt = session and speaker, right?
+                  data = txt2, 
+                  paste, 
+                  collapse = " ")
+
+df<-as.data.frame(as.matrix(table(txt2_t$speaker_fp)))
+df$names<-rownames(df)
+txt2<-txt2[txt2$speaker_fp %in% df$names[df$V1==4],] 
+#length(df$names[df$V1==4]) 
+  
+#select speakers with the highest number of sentences
+txt2$ns<-nsentence(txt2$text)
+txt2_t2<- aggregate(txt2$ns, by=list(Category=txt2$speaker_fp), FUN=sum)
+txt2<-txt2[txt2$speaker_fp  %in% txt2_t2$Category[txt2_t2$x>500],]
+#length(txt2_t2$Category[txt2_t2$x>500]) #number of speakers included: 281
+
+#replace ???
+txt2$text<-chartr("????", "aous", txt2$text)
+txt.c<-corpus(txt2)
+```
+
+```{r speaker_head, include=TRUE, cache=TRUE}
+print(head(unique(txt2$speaker_fp)))
+```
+Overall, `r length(unique(txt2$speaker_fp))` speakers are included in the df.
+
+## Prepare 
+
+- Next, we remove punctuation, numbers, capitalization, tokenize the text into sentences and words, and reduce words to their dictionary root. 
+- Subsequently, the number of tokens is reduced by removing stop-words, procedural vocabulary and other non-policy words. 
+- The list of which words to exclude is adopted from @Ash2017, Appendix, pp.27. 
+
+```{r prepare, include=FALSE, cache=TRUE}
+txt.t<-tokens(txt.c,
+              remove_punct = TRUE,
+              remove_numbers = TRUE,
+              what = "word",
+              include_docvars= TRUE, 
+              remove_symbols = TRUE)
+txt.t<-tokens_remove(txt.t, stopwords("german"))
+```
+
+```{r prepare_2, include=TRUE, cache=TRUE}
+print(sum(ntoken(txt.t)))
+source('scr_R/toexclude.R')
+txt.t<-tokens_select(txt.t, toexclude, selection = "remove", padding = FALSE)
+print(sum(ntoken(txt.t)))
+```
+
+```{r prepare_3, include=FALSE, cache=TRUE}
+txt.t<-tokens_wordstem(txt.t, language = "de")
+txt.t<-tokens_tolower(txt.t)
+txt.t<-tokens_remove(txt.t, "?") 
+txt.t<-tokens_remove(txt.t, "??")
+
+
+```
+
+## Bi- and Trigrams
+Based on the tokenized speeches, we construct bi- and trigrams. 
+To increase computational speed, we chose only phrases with a minimum document and termfrequency of 10.
+
+```{r bitri, include=TRUE, cache=TRUE}
+bitri<- tokens_ngrams(txt.t, 1:2) #generate ngrams 
+sum(ntoken(bitri))
+
+phi_ikt<-dfm_trim(dfm_group(dfm(bitri), groups = interaction(E_jt, speaker_fp, speaker_party)),
+         min_docfreq = 10,
+         min_termfreq = 10)
+k<-colnames(phi_ikt)
+```
+
+## Construct frequency-weighted phrase divisiveness 
+
+$Y_{it}$ measures the divisiveness of speech.
+
+$$
+Y_{it} = log(\sum_{k=1}^{K}{\frac{f_{ikt} \cdot \chi_{kt}^2}{F_{it}}})
+$$
+
+---
+
+### Political Divisiveness Metric 
+
+- $\chi^2_{kt}$, denotes the political divisiveness of a phrase.
+- According to @Gentzkow2010, this metric ranks phrases by their association with particular political parties.
+
+It is constructed as follows. 
+
+- $n_{kt}^{CDU}$: the number of times phrase $k$ is used by CDU/CSU-politicians during session $t$. 
+- $N_{t}^{CDU} = \sum_{k}n_{kt}^{CDU}$ are summed frequencies of all phrases used by CDU/CSU-politicians in session $t$. 
+- $\tilde{n}_{kt}^{CDU} = N_{t}^{CDU} - n_{kt}^{CDU}$: total number of times phrases besides $k$ were used by CDU/CSU-politicians. 
+
+Pearson’s $\chi_{kt}^2$ statistic for each phrase $k$ at time $t$ is constructed as:
+
+$$
+\chi_{kt}^2 = \frac{ ( n_{kt}^{CDU} \tilde{n}_{kt}^{SPD} - n_{kt}^{SPD} \tilde{n}_{kt}^{CDU} )  }
+{N_{t}^{CDU} N_{t}^{SPD} ( n_{kt}^{CDU}  + \tilde{n}_{kt}^{SPD} ) ( n_{kt}^{CDU} + \tilde{n}_{kt}^{SPD} ) }
+$$
+
+- $\chi_{kt}^2$ provides a test statistic for the null hypothesis that phrase $k$ is used equally by CDU/CSU and SPD-politicians during session $t$
+- If the frequencies $n_{kt}^{CDU}$ and $n_{kt}^{SPD}$ are drawn from multinomial distributions.
+- $\chi_{kt}^2$ scores language as divisive if it is used more often by just one of the political parties.
+
+```{r chi2_kt, include=FALSE, cache=TRUE, warning=FALSE}
+#construct
+dfm_kt.f<-dfm(bitri, groups = c("E_jt", "speaker_party")) #group by party
+dfm_kt<-dfm_select(dfm_kt.f, k, selection = "keep") #choose same ngrams
+
+#CDU
+df.cdu<-as.data.frame(dfm_subset(dfm_kt, substrRight(rownames(dfm_kt), 3)=="csu"))
+df.cdu<-df.cdu[,-1] #psi_kt
+N_cdu<-rowSums(df.cdu)
+```
+
+---
+
+We start constructing $\chi_{kt}^2$ by calculating $N_{cdu}$ and $N_{spd}$
+
+```{r chi2_kt_2, include=TRUE, cache=TRUE, warning=FALSE}
+df.spd<-as.data.frame(dfm_subset(dfm_kt, substrRight(rownames(dfm_kt), 3)=="spd"))
+df.spd<-df.spd[,-1]
+N_spd<-rowSums(df.spd)
+print(N_spd)
+```
+
+---
+
+$\chi_{kt}^2$ is then constructed as follows:
+```{r chi2_kt_prep, include=FALSE, cache=TRUE}
+chi2<-as.data.frame(matrix(NA, 
+                           nrow = dim(df.cdu)[1], 
+                           ncol = dim(dfm_kt)[2]))
+rownames(chi2)<-1:4
+colnames(chi2)<-colnames(dfm_kt)
+```
+
+```{r chi2_kt_loop, include=TRUE, cache=TRUE}
+for(i in 1:dim(chi2)[1]){
+  for(j in 1:dim(chi2)[2]){
+    n_cdu<-df.cdu[i,j]
+    n_spd<-df.spd[i,j]
+
+    nt_cdu<-(N_cdu[i]-n_cdu)
+    nt_spd<-(N_spd[i]-n_spd)
+    
+    chi2[i,j]<- (((n_cdu*nt_spd-n_spd*nt_cdu)^2)/(N_cdu[i]*N_spd[i]*(n_cdu+n_spd)*(nt_cdu+nt_spd)))
+  }
+}
+print(chi2[,1:5])
+```
+
+---
+
+According to $\chi_{kt}^2$, the 10 most and least divisive phrases in the dataset are:
+
+```{r most_least_phrases, echo=FALSE, cache=TRUE}
+chi2[dim(chi2)[1]+1,]<-colSums(chi2)
+
+chi22<-as.data.frame(t(chi2[dim(chi2)[1]+1,]))
+chi22$names<-rownames(chi22)
+chi22<-chi22[order(-chi22[,1]), ]
+
+chi2<-chi2[-5,]
+
+chi2_t<-cbind(as.matrix(sort(head(chi22$names, 10))),
+      as.matrix(sort(tail(chi22$names, 10))))
+colnames(chi2_t)<-c("Most Divisive Phrases",
+                "Least Divisive Phrases")
+chi2_t
+```
+
+---
+
+### Normalized Frequency
+
+- Just a reminder: Our goal is to calculate $Y_{it}$
+
+$$
+Y_{it} = log(\sum_{k=1}^{K}{\frac{f_{ikt} \cdot \chi_{kt}^2}{F_{it}}})
+$$
+
+- We just calculated $\chi_{kt}^2$
+- Now, we proceed with $f_{ikt}$
+- The normalized frequency $f_{ikt}$ is constructed such that it shows zero mean and standard deviation one (z-score centering, function `scale()`). 
+- This means that each phrase has the same influence on the divisiveness measure. 
+$$
+f_{ikt}:=\frac{\phi_{ikt}-\mu_{kt}}{\sigma_{kt}}
+$$
+
+----
+
+$$
+f_{ikt}:=\frac{\phi_{ikt}-\mu_{kt}}{\sigma_{kt}}
+$$
+
+That's $\phi_{ikt}$:
+```{r f_ikt_1, include=TRUE, cache=TRUE, warning=FALSE}
+phi_ikt[1:5,1:5]
+```
+
+---
+
+$$
+f_{ikt}:=\frac{\phi_{ikt}-\mu_{kt}}{\sigma_{kt}}
+$$
+
+That's $\mu_{kt}$:
+```{r f_ikt_2, echo=FALSE, cache=TRUE, warning=FALSE}
+tik<-do.call(rbind.data.frame,
+              strsplit(rownames(phi_ikt), split='.', fixed=TRUE))
+mu_ikt<-as.data.frame(phi_ikt)
+mu_ikt$t<-tik[,1]
+mu_ikt$c<-tik[,3]
+mu_ikt<-mu_ikt[,-1]
+mu_kt<- mu_ikt %>%
+  group_by(t,c) %>%
+  dplyr::summarise(across(.cols = everything(), 
+                   ~ mean(.x, na.rm = TRUE)))
+mu_kt[,1:5]
+```
+
+---
+
+$$
+f_{ikt}:=\frac{\phi_{ikt}-\mu_{kt}}{\sigma_{kt}}
+$$
+
+That's $\sigma_{ikt}$
+```{r f_ikt_3, include=TRUE, cache=TRUE, warning=FALSE}
+sigma_ikt<-as.data.frame(phi_ikt)
+sigma_ikt$t<-tik[,1]
+sigma_ikt$c<-tik[,3]
+sigma_ikt<-sigma_ikt[,-1]
+sigma_kt<- sigma_ikt %>%
+  group_by(t,c) %>%
+  dplyr::summarise(across(.cols = everything(), 
+                   ~ sd(.x, na.rm = TRUE)))
+sigma_kt[,1:5]
+```
+
+---
+
+And here we finally have $f_{ikt}$
+
+$$
+f_{ikt}:=\frac{\phi_{ikt}-\mu_{kt}}{\sigma_{kt}}
+$$
+```{r f_ikt_4, include=TRUE, cache=TRUE, warning=FALSE}
+f_ikt <- as.data.frame(t(apply(phi_ikt, 1, scale))) #mean over rows
+colnames(f_ikt)<-colnames(phi_ikt)
+f_ikt[1:5,1:5]
+```
+
+---
+
+### Total Number of Phrases Spoken
+
+- Remember our goal is to calculate $Y_{it}$
+
+$$
+Y_{it} = log(\sum_{k=1}^{K}{\frac{f_{ikt} \cdot \chi_{kt}^2}{F_{it}}})
+$$
+
+- We started with $Y_{it}$, went on to calculate $f_{ikt}$; now, only $F_{it}$ is left
+- $F_{it}$ is the total number of phrases spoken by member $i$ during $t$.
+$$
+F_it=\sum_{k=1}^{K} f_{ikt}
+$$
+
+```{r F_it , echo=FALSE, cache=TRUE}
+F_it<-as.data.frame(rowSums(f_ikt))
+colnames(F_it)<-"F_it"
+head(F_it)
+```
+
+## Politician Divisiveness
+Politician divisiveness $Y_{it}$ is defined as the frequency-weighted phrase divisiveness for the phrases used by the member.
+$$
+Y_{it} = log(\sum_{k=1}^{K}{\frac{f_{ikt} \cdot \chi_{kt}^2}{F_{it}}})
+$$
+
+
+```{r Y_it, echo=FALSE, cache=TRUE}
+#construct empty df
+Y_it<- data.frame(matrix(ncol = 1, nrow = dim(F_it)[1]))
+rownames(Y_it)<-rownames(F_it)
+colnames(Y_it)<-"y_it"  
+
+#calculate
+f_it<-c()
+for(i in 1:dim(Y_it)[1]){
+  chi<-chi2[substr(rownames(f_ikt)[i], start = 1, stop = 1) ,] # get right E_ij
+  for(j in 1:dim(f_ikt)[2]){
+    f_it[j]<-((chi[[j]]*f_ikt[i,j])/F_it[i,1])  
+  }
+  Y_it[i,1]<-log(abs(sum(f_it, na.rm=TRUE))) 
+}
+```
+
+## Plot
+In the followig we plot a histogram of $Y_{it}$
+```{r plt_hist, echo=FALSE, cache=TRUE, fig.align='center', warning=FALSE}
+Y_it$E_ij<-substr(rownames(Y_it), start = 1, stop = 1)
+Y_it$speaker<-substring(rownames(Y_it), 3)
+
+ggplot(Y_it, aes(y_it)) +
+geom_histogram()
+```
+
+---
+
+- The following figure plots average politicians' speech divisiveness over the course of the four years of a "Legislaturperiode". 
+- Error spikes indicate the 95% confidence interval. 
+```{r plt_, echo=FALSE, cache=TRUE, warning=FALSE, fig.align='center'}
+tgc <- summarySE(Y_it, measurevar="y_it", groupvars="E_ij")
+ggplot(tgc, aes(x=E_ij, y=y_it)) + 
+    geom_errorbar(aes(ymin=y_it-ci, ymax=y_it+ci), width=.1) +
+    geom_line() +
+    geom_point()
+```
+
+```{r regression, include=FALSE, cache=TRUE}
+txt2$ws<-paste(txt2$year, txt2$speaker_fp, txt2$speaker_party, 
+               sep=".") 
+txt2_r<-txt2[!duplicated(txt2[,"ws"]),] #delete rows where speaker spoke twice in a year todo I should concat them!
+txt2_r<-txt2_r[txt2_r$ws %in% rownames(Y_it),]
+
+table(unique(txt2_r$ws))
+table(unique(rownames(Y_it)))
+sd<-setdiff(rownames(Y_it),txt2_r$ws)
+Y_it$names<-rownames(Y_it)
+
+txt2_r[txt2_r$speaker_party=="CDUCSU"] <- 1
+txt2_r[txt2_r$speaker_party=="SPD"]    <- 2
+```
+
+## Fixed Effects Regression
+$$
+		Y_{it} = \alpha_{it} + \rho_EE_{it} + \epsilon_{it} 
+$$
+	
+-	$E_{it}$: election treatment
+-	$Y_{it}$: divisiveness 
+-	$\alpha_{it}$: fixed effects (party-year) 
+- $\epsilon_{it}$: omitted variables
+
+---
+
+$$
+		Y_{it} = \alpha_{it} + \rho_EE_{it} + \epsilon_{it} 
+$$
+
+```{r fe, echo=FALSE, cache=TRUE}
+
+Y_it$year<-txt2$year[match(Y_it$speaker,
+                            paste(txt2$speaker_fp, txt2$speaker_party,sep="."))]
+Y_it$party<-do.call(rbind.data.frame,
+              strsplit(Y_it$speaker, split='.', fixed=TRUE))[,2]
+
+Y_it2<-Y_it %>% tidyr::drop_na()
+model.c <- felm(y_it ~ E_ij|factor(party) , data = Y_it2,
+                exactDOF=TRUE)
+summary(model.c)
+```
+
+## Linear Model
+```{r linear_model, include=TRUE, cache=TRUE}
+reg1<-lm(Y_it$y_it~Y_it$E_ij)
+summary(reg1)
+```
+## References

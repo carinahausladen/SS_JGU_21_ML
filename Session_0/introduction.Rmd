@@ -1,0 +1,73 @@
+---
+title: "Introduction"
+subtitle: "Summer School JGU Mainz — Advanced Methods in Behavioral Economics, 2021"
+author: "Carina I. Hausladen"
+date: "`r Sys.Date()`"
+output:
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+bibliography: ss21.bib 
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(viridis)
+library(hrbrthemes)
+```
+
+```{r read, include=FALSE}
+df <- read_csv("SS_skills.csv",skip = 1)
+df2<-df[,18:35]
+df2<-df2[-1,-c(10,12)]
+```
+
+```{r language, echo=FALSE, fig.align='center'}
+df2 %>% count(`python (3)`,`R/RStudio`)%>% 
+  pivot_longer(cols = `python (3)`:`R/RStudio`,names_to = c("language"),values_to = "choice")%>%
+  ggplot(., aes(fill=choice, y=n, x=language)) + 
+    geom_bar(position="stack", stat="identity") +
+    scale_fill_viridis(discrete = T) +
+    ggtitle("Programming Language") +
+    theme_ipsum() +
+    xlab("")
+```
+         geom_bar(stat='identity')
+```{r git, echo=FALSE}
+df2 %>% count(`Git (version control)`)%>%
+    ggplot(., aes(x=`Git (version control)`, y=n, fill=factor(n)))+
+              geom_bar(stat='identity')+
+    scale_fill_viridis(discrete = T) +
+    ggtitle("Git (version control)") +
+    theme_ipsum() +
+    xlab("")
+```
+
+```{r prefer, echo=FALSE}
+df2 %>% count(`I prefer...`)%>%
+    ggplot(., aes(x=`I prefer...`, y=n))+
+              geom_bar(stat='identity')
+``` 
+
+```{r venv, include=FALSE}
+df2 %>% count(`I use... - venv`)%>%
+    ggplot(., aes(x=`I use... - venv`, y=n))+
+              geom_bar(stat='identity')
+``` 
+```{r pip, include=FALSE}
+df2$`Some topics - wordscore/wordfish/wordshoal`
+df2 %>% count(`I use... - pip`)%>%
+    ggplot(., aes(x=`I use... - pip`, y=n))+
+              geom_bar(stat='identity')
+``` 
+```{r pip, include=FALSE}
+df2$`Some topics - wordscore/wordfish/wordshoal`
+df2 %>% count(`I use... - pip`)%>%
+    ggplot(., aes(x=`I use... - pip`, y=n))+
+              geom_bar(stat='identity')
+``` 
+
