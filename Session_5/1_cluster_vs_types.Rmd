@@ -44,6 +44,7 @@ library(ggpubr)
 library(RColorBrewer)
 library(knitr) 
 library(png) 
+library(grid)
 
 graphics.off()
 
@@ -92,8 +93,8 @@ ls <- reinterpolate(x = ls, n = max(simdat_grp$period)-1, multivariate = TRUE)
 
 ### Characteristics of distance measures implemented in dtwclust. 
 Table by @Sarda-Espinosa2017.
-```{r distsance, echo=FALSE, fig.align="center", cache=TRUE, fig.width=12}
-include_graphics("figures/distance_measures.png")
+```{r distance, echo=FALSE, fig.align="center", cache=TRUE, out.width="600px"}
+knitr::include_graphics("figures/distance_measures.png")
 ```
 
 --- 
@@ -103,14 +104,13 @@ include_graphics("figures/distance_measures.png")
 - DTW is computationally expensive. If $x$ has length $n$ and $y$ has length $m$, the DTW distance between them can be computed in $O(nm)$ time, which is quadratic if $m$ and $n$ are similar. 
 - The DTW distance can deal with series of different length. 
 
-```{r sample, echo=FALSE, fig.align="center", cache=TRUE, fig.width=12}
-include_graphics("figures/dtw.png")
+```{r sample, echo=FALSE, fig.align="center", cache=TRUE, out.width="600px"}
+knitr::include_graphics("figures/dtw.png")
 ```
 Figure from @Sarda-Espinosa2017
 
 - The figure shows sample alignment performed by DTW between two series. 
-- The dashed blue lines exemplify how some points are mapped to each other.
-- In other words: It shows how they can be warped in time.
+- The dashed blue lines exemplify how some points are mapped to each other (warped in time).
 
 ---    
 
@@ -120,10 +120,12 @@ Figure from @Sarda-Espinosa2017
 - DTW finds the path that minimizes the alignment between $x$ and $y$ by iteratively stepping through $lcm$, starting at $lcm(1, 1)$ and finishing at $lcm(n,m)$, and aggregating the cost. 
 - At each step, the algorithm finds the direction in which the cost increases the least under the chosen constraints. 
 
-```{r opt_path, echo=FALSE, fig.align="center", cache=TRUE, fig.width=8}
-include_graphics("figures/dtw_alignment.png")
+---
+
+```{r opt_path, echo=FALSE, fig.align="center", cache=TRUE, out.width="300px"}
+knitr::include_graphics("figures/dtw_alignment.png")
 ```
-- The figure shows the optimum path found (corresponding to previous figure). 
+- The figure shows the optimum path found (corresponding to previous figure).  
 - The square in the center represents the $lcm$ created for these specific series.
 
 ---
@@ -158,11 +160,11 @@ distances = pdc_configs(type = "distance",
 ```
 
 - $\gamma$
-  - If you are interested in the impact of $\gamma$, read @Cuturi2017, Table 1.
+  - If you are interested in the impact of $\gamma$, read @Cuturi2011, Table 1.
 - window 
   - global constraint 
   - It is common to use a window whose size is 10% of the series’ length. 
-  - Sometimes smaller windows produce even better results @Ratanamahatana2004a.
+  - Sometimes smaller windows produce even better results [@Ratanamahatana2004].
 - norm
   - For each element $(i, j)$ in $lcm$, the $l_p$ norm between $x_i$ and $y_j$ must be computed.
   - The l1 and l2 vector norms, also known as Manhattan and Euclidean distances.
@@ -175,8 +177,8 @@ distances = pdc_configs(type = "distance",
 - The distance measure should correspond to the one used by the prototyping function
 - A prototype can be generated (e.g. mean) or a reference time-series is chosen.
 
-```{r proto, echo=FALSE, fig.align="center", cache=TRUE}
-include_graphics("figures/summary_prototypes.png")
+```{r proto, echo=FALSE, fig.align="center", cache=TRUE, out.width="600px"}
+knitr::include_graphics("figures/summary_prototypes.png")
 ```
 
 ---
@@ -207,24 +209,15 @@ We'll discuss three different types of algorithms
 
 ## Hierarchical Clustering
 
-Hierarchical clustering creates a hierarchy of groups.
-```{r hier, echo=FALSE, fig.align="center", cache=TRUE}
-include_graphics("figures/hierarchical_clustering.png")
+```{r hier, echo=FALSE, fig.align="center", cache=TRUE,out.width="400px"}
+knitr::include_graphics("figures/hierarchical_clustering.png")
 ```
 
-- As the level in the hierarchy increases, clusters are created by merging the clusters from the next lower level
-- In order to decide how the merging is performed, a (dis)similarity measure between groups is specified.
-- The procedure is deterministic, so it will always give the same result for a chosen set of (dis)similarity measures. 
-
----
-
-### Hierarchical Clustering
-
+- The procedure is deterministic: It will always give the same result for a chosen set of (dis)similarity measures. 
 - Algorithms can be agglomerative or divisive (less common).
 - In agglomerative procedures, every member of the data starts in its own cluster, and members are grouped together sequentially based on the similarity measure until all members are contained in a single cluster. 
 - Divisive procedures do the exact opposite. 
 - Both strategies suffer from a lack of flexibility, because they cannot perform adjustments once a split has been done. 
-- The inter-group dissimilarity is also known as linkage. 
 
 ## Partitional Clustering
 
@@ -235,8 +228,8 @@ include_graphics("figures/hierarchical_clustering.png")
 - Partitional clustering procedures are stochastic due to their random start. 
 - Thus, it is common practice to test different random starts (via `nrep`) to evaluate several local optima and choose the best result out of all the repetitions.
 
-```{r part, echo=FALSE, fig.align="center", cache=TRUE}
-include_graphics("figures/partitional_clustering.png")
+```{r part, echo=FALSE, fig.align="center", cache=TRUE, out.width="400px"}
+knitr::include_graphics("figures/partitional_clustering.png")
 ```
 Example for Partitional Clustering, figure from @Alhenak2019.
 
@@ -262,17 +255,13 @@ controls = list(partitional = partitional_control(iter.max = 2L,
 - The degree of belongingness is constrained so that its sum equals $1$ across all clusters.
 - If there are $N$ objects in the data and $k$ clusters are desired, an $N×k$ membership matrix $u$ can be created, where all the rows must sum to $1$
 
-```{r fuzzy, echo=FALSE, fig.align="center", cache=TRUE}
-include_graphics("figures/fuzzy_clustering.png")
+```{r fuzzy, echo=FALSE, fig.align="center", cache=TRUE, out.width="350px"}
+knitr::include_graphics("figures/fuzzy_clustering.png")
 ```
 Figure from @Bolin2014
 
 ## Implementation
 - Now, let's combine our knowledge about distance functions, prototypes, and clustering algorithms to define the scoring function `define_config_multi`.
-- The specificities are 
-  - algorithm: partitional
-  - prototype: dba
-  - distance: sdtw
 
 `r emo::ji("nerd")`: Use hierarchical (instead of partitional) clustering.
 ```{r cluster_prep, include=TRUE, cache=TRUE}
@@ -326,12 +315,13 @@ score_internal <- internal_evaluators$score
 
 ## Cluster Validity Indices
 
-- Most of the CVIs estimate the cluster cohesion (within or intra-variance) and the cluster separation (between or inter- variance) and combine them to compute a quality measure. 
+- Most of the CVIs estimate the cluster cohesion (within or intra-variance) and the cluster separation (between or inter-variance) and combine them to compute a quality measure. 
 - The combination is performed by a division (ratio-type indices) or a sum (summation-type indices) [@Kim2005].
 
-#### Overview of Internal Cluster Validity Indices
-```{r cvis_plot_theory, echo=FALSE, fig.align="center", cache=TRUE}
-include_graphics("figures/internalCVIs.png")
+---
+
+```{r cvis_plot_theory, echo=FALSE, fig.align="center", cache=TRUE, out.width="600px"}
+knitr::include_graphics("figures/internalCVIs.png")
 ```
 
 - Knowing which CVI will work best cannot be determined a priori, so they should be tested for each specific application.
@@ -344,7 +334,7 @@ pick_majority <- internal_evaluators$pick
 ## Implementation
 
 This is where the actual clustering takes place.
-```{r clustering, include=TRUE, cache=TRUE}
+```{r clustering, include=TRUE, cache=TRUE, warning=FALSE}
 require(doParallel)
 registerDoParallel(cl <- makeCluster(detectCores()))
 
@@ -404,6 +394,8 @@ expintCVI[cvis] <- lapply(expintCVI[,cvis],
                            function(x){(x-min(x))/(max(x)-min(x))}) 
 ```
 
+---
+
 - We go on and recode those CVIs that need to be minimized (instead of maximized).
 ```{r cvis_recode, include=TRUE, cache=TRUE}
 expintCVI$COP <- 1 - expintCVI$COP
@@ -412,8 +404,6 @@ expintCVI$DB <- 1 - expintCVI$DB
 
 expintCVI<-expintCVI[expintCVI$gamma_distance==0.001,]
 ```
-
----
 
 - We use partitional clustering with several restarts.
 - Therefore, we either need to average the results or pick one round.
@@ -444,7 +434,7 @@ for (i in 1:dim(expintCVI)[1]) {
 int<-expintCVI$k[expintCVI$rankvote == max(expintCVI$rankvote)]
 ```
 
-```{r cvis_plot, echo=FALSE, cache=TRUE, fig.align="center", fig.height=8}
+```{r cvis_plot, echo=FALSE, cache=TRUE, fig.align="center", out.width="400px"}
 CVI_long$k<-as.numeric(CVI_long$k)
 p_cvi<-ggplot(CVI_long, aes(x=k, y=CVI_val, group=CVIs, color=CVIs)) + 
   geom_point(size=0.3)+

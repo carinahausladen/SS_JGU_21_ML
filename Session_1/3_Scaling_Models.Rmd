@@ -42,13 +42,10 @@ Furthermore, we will look at how various degrees of preprocessing influence the 
 ```{r data, include=FALSE, cache=TRUE}
 ukm <- readtext("data/election-manifestos-uk")
 ukm.c<-corpus(ukm)
-#mp_setapikey("manifesto_apikey.txt")
-#my_corpus <- mp_corpus(countryname == "United Kingdom" & edate > as.Date("2000-01-01"))
-#ukm<-my_corpus
 ```
 
 
-## Degrees of Preprocessing
+## 3 Degrees of Preprocessing
 
 In the following, we generate three different degrees of preprocessing. The first dfm is subject to no preprocessing at all.
 ```{r vry_prprcssng_no, include=TRUE, warning=FALSE, message=FALSE, error=FALSE, cache=TRUE}
@@ -99,24 +96,10 @@ prcnt_fll<-round((1-(as.numeric(degrees["terms","full"])/as.numeric(degrees["ter
 
 # Scaling Models
 
-## Latent variable model 
-
-$\theta->W$
-
-Typically, scaling models assume that
-
-- relative word usage is reflective of political ideology;
-- positions are unidimensional in $W$;
-- positions drive word counts stochastically according to a particular form for $P(W_j|\theta)$;
-- bag of words: counts of $W_j$ are conditionally independent given $\theta$
-
-$$
-P(W_1...W_v) = \prod_{j}^{V}P(W_j|\theta)P(\theta)
-$$
-
 ## Wordscore Model
 
-Wordscores is a (supervised) scaling model for estimating the positions for dimensions that are specified a priori. The model was introduced by @Laver2003 and is widely used among political scientists.
+- Wordscores is a (supervised) scaling model for estimating the positions for dimensions that are specified a priori. 
+- The model was introduced by @Laver2003 and is widely used among political scientists.
 
 - Each word $j$ has a policy position (word score) $\pi_j$.
 - A reference document needs to be specified.
@@ -132,8 +115,6 @@ Wordscores is a (supervised) scaling model for estimating the positions for dime
 - Once we assign reference values to the reference texts, we can compute a "word score". 
 - Suppose reference text A has position $-1$, and text B position $+1$, the score of word "summer" is: $0.25(−1.0) + 0.75(1.0) = −0.25 + 0.75 = 0.5$
 
-
-#### @Laver2003
 
 The expert Wordscore survey estimates for 1992 can be found in @Laver2003, p.320: The score for Liberal Democrats is $8.21$, the Labour Party scores $5.35$ and the Conservatives yield a score of $17.21$.
 
@@ -164,7 +145,7 @@ names(ws.pr.3)<-gsub("\\..*","",ukm$doc_id)
 
 ### Plotting the Document Positions
 The plots show that the ordering of the texts (based on their Wordscore) varies with the degree of preprocessing applied to the corpus. All three plots show the same top five as well as the same bottom six documents. However, the order of the documents inbetween varies. 
-```{r dcmnt_pstns_1, echo=FALSE, out.width='.32\\linewidth', fig.width=5, fig.height=2,fig.show='hold',fig.align='center', cache=TRUE, fontsize = 2}
+```{r dcmnt_pstns_1, echo=FALSE, out.width='.32\\linewidth', fig.width=5, fig.height=2,fig.show='hold', fig.align='center', cache=TRUE, fontsize = 2}
 grid.arrange(
 textplot_scale1d(ws.pr.1) +ggtitle("No preprocessing")+theme(text=element_text(size=5)),
 textplot_scale1d(ws.pr.2) +ggtitle("Modest preprocessing")+theme(text=element_text(size=5)),
@@ -192,12 +173,7 @@ ggplot(data=ws.l,
 
 ### Descriptive Statistics
 
-- The table shows that the three different corpi do not vary much concerning descriptive statistics of their wordscores. 
-- The mean is the same for the not and the fully preprocessed corpi.
-- The sd does not vary at all with the degree of preprocessing. 
-- However, min and max values do vary. 
-- The min value for the raw corpus is smaller compared to the fully preprocessed corpus. 
-- The same relationship can be stated for the max value.
+The table shows that the three different corpi do not vary much concerning descriptive statistics of their wordscores. 
 ```{r ws_cmprsn, echo=FALSE, cache=TRUE}  
 ws.comp <- data.frame(matrix(ncol = 3, nrow = 4))
 rownames(ws.comp)<-c("mean", "sd", "min", "max")
@@ -285,25 +261,6 @@ Iterate:
 
 ---
 
-### Model Identification
-
-$log(\mu_{ij}) = \psi_j +\beta_j \theta_i + \alpha_i$
-
-- As is the case with all scaling models (e.g. NOMINATE), the likelihood function is not identified. Without fixing some parameters, there are infinite combinations of $\theta$ and $\beta$, which could provide the same likelihood (we would not arrive at a unique solution).
-- Solution 
-
-  - Fix mean of document positions $\theta$ to $0$ and $sd=1$. 
-  - Set one document fixed effect to $0$
-  - Set directionality of scale. This means that you cannot directly compare estimates ACROSS different estimations.
-
-### What is $\theta$?
-
-- Whatever maximizes the Likelihood
-- Approximately the first principal component of log $W$
-- Like all scaling techniques (e.g. NOMINATE by @Poole1985), Wordfish is exploratory — you have to figure out what the dimension really is. This is the reason why you need to think about your data before applying the method.
-
----
-
 ### Run Wordfish Model
 
 Before running the Wordfish model, I specify the direction of the scale. I define the `UKIP_2015` as the most right position whereas `LIBDEM_1992` is defined as the most left position.
@@ -384,12 +341,14 @@ grid.arrange(
 
 - An extension of Wordfish specifically for legislative debates. 
 - Goal: estimate legislator positions.
-- Step 1: debate-level scaling model: Wordfish.
+- Steps
+  - debate-level scaling model: Wordfish.
 These are debate specific estimates that are not comparable.
-- Step 2: treat estimates as data and use factor analysis to aggregate them into one or more general latent positions for each legislator.
-- Not all legislators speak, so simple factor analysis that requires complete matrix do not apply. 
-- Alternative: Bayesian treatment of linear factor model.
-- Assumption: Missing debate specific positions for legislators are missing at random and unrelated to their decision to participate in debate.
+  - treat estimates as data and use factor analysis to aggregate them into one or more general latent positions for each legislator.
+- Problem
+  - Not all legislators speak, so simple factor analysis that requires complete matrix do not apply. 
+  - Alternative: Bayesian treatment of linear factor model.
+  - Assumption: Missing debate specific positions for legislators are missing at random and unrelated to their decision to participate in debate.
 
 ## Critique
 

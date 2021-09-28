@@ -14117,7 +14117,7 @@ div.jp-OutputPrompt {
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">))</span>
@@ -14140,7 +14140,7 @@ div.jp-OutputPrompt {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>2021-09-25
+<pre>2021-09-28
 </pre>
 </div>
 </div>
@@ -14152,17 +14152,15 @@ div.jp-OutputPrompt {
 </div></div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h1><ul>
-<li>Tom Lin, 2019: <a href="https://towardsdatascience.com/nlp-performance-of-different-word-embeddings-on-text-classification-de648c6262b">Blog</a>, <a href="https://github.com/TomLin/Playground/blob/master/04-Model-Comparison-Word2vec-Doc2vec-TfIdfWeighted.ipynb">github</a></li>
-<li><a href="https://deepset.ai/german-word-embeddings">pretrained embeddings</a><ul>
+<h1 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h1><p>Tom Lin, 2019: <a href="https://towardsdatascience.com/nlp-performance-of-different-word-embeddings-on-text-classification-de648c6262b">Blog</a>, <a href="https://github.com/TomLin/Playground/blob/master/04-Model-Comparison-Word2vec-Doc2vec-TfIdfWeighted.ipynb">github</a></p>
+<p><a href="https://deepset.ai/german-word-embeddings">pretrained embeddings</a></p>
+<ul>
 <li>The deepset files need to be manually reformatted, according to the <a href="https://radimrehurek.com/gensim/scripts/glove2word2vec.html">gensim documentation</a>.</li>
 <li><strong>Please make sure that you have downloaded the pretrained embeddings (.magnitude files) according to the README.md and placed them in the data folder.</strong></li>
 </ul>
-</li>
-</ul>
 
 </div>
-</div><div class="fragment">
+</div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <ul>
@@ -14171,7 +14169,7 @@ div.jp-OutputPrompt {
 </ul>
 
 </div>
-</div></div></section></section><section><section>
+</div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Bag-of-Words">Bag of Words<a class="anchor-link" href="#Bag-of-Words">&#182;</a></h1>
@@ -14179,7 +14177,7 @@ div.jp-OutputPrompt {
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">bow</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="n">lowercase</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">preprocessor</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
@@ -14217,7 +14215,7 @@ div.jp-OutputPrompt {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>F1: 0.802 | Pr: 0.686 | Re: 0.989 | AUC: 0.560 | Accuracy: 0.679 
+<pre>F1: 0.801 | Pr: 0.685 | Re: 0.987 | AUC: 0.563 | Accuracy: 0.677 
 
 </pre>
 </div>
@@ -14235,7 +14233,7 @@ div.jp-OutputPrompt {
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="n">lowercase</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">preprocessor</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
@@ -14270,7 +14268,7 @@ div.jp-OutputPrompt {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>F1: 0.795 | Pr: 0.671 | Re: 1.000 | AUC: 0.553 | Accuracy: 0.661 
+<pre>F1: 0.796 | Pr: 0.674 | Re: 0.995 | AUC: 0.556 | Accuracy: 0.663 
 
 </pre>
 </div>
@@ -14284,25 +14282,21 @@ div.jp-OutputPrompt {
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Word2Vec">Word2Vec<a class="anchor-link" href="#Word2Vec">&#182;</a></h1><p><a href="https://arxiv.org/abs/1301.3781">Mikolov et al. 2013</a>, <a href="https://towardsdatascience.com/word2vec-explained-49c52b4ccb71">Vatsal</a> <br></p>
+<p>Intuition</p>
 <ul>
-<li>Intuition<ul>
 <li>Word2Vec groups vectors of similar words. </li>
 <li>It estimates a word's meaning based on its occurrences in the text. </li>
-<li>These estimates yield word associations with other words in the corpus.</li>
 <li>For example: 
 <pre><code>King    -    Man    +    Woman    =    Queen
 [5,3]   -    [2,1]  +    [3, 2]   =    [5,4]</code></pre>
 </li>
 </ul>
-</li>
-</ul>
 
 </div>
-</div><div class="fragment">
+</div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<ul>
-<li><p>How it works</p>
+<p>How it works</p>
 <ul>
 <li>Words are transformed into a numerical representation of the word.</li>
 <li>This vector is learned via a neural network. </li>
@@ -14313,21 +14307,17 @@ div.jp-OutputPrompt {
   fun = [0, 0, 1, 0, 0, 0, ... 0]</code></pre>
 </li>
 </ul>
-</li>
-</ul>
 
 </div>
-</div></div><div class="fragment">
+</div><div class="fragment">
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Implementation</p>
 <ul>
-<li>Implementation<ul>
 <li>We implement Word2Vec via gensim's <a href="https://radimrehurek.com/gensim/models/word2vec.html">Word2vec class</a>.</li>
 <li>Variations<ul>
 <li>We can either train our own embeddings or use pretrained embeddings.</li>
 <li>Both types can be implemented via bow or tf-idf.</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -14336,12 +14326,13 @@ div.jp-OutputPrompt {
 </div></div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="own,-bow">own, bow<a class="anchor-link" href="#own,-bow">&#182;</a></h2>
+<h2 id="own,-bow">own, bow<a class="anchor-link" href="#own,-bow">&#182;</a></h2><p>🤓: Change <code>vector_size</code> and <code>min_count</code>and investigate the impact.</p>
+
 </div>
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">w2v_own</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">all_docs</span><span class="o">.</span><span class="n">doc_words</span><span class="p">,</span> <span class="n">vector_size</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">min_count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -14410,7 +14401,7 @@ WARNING:root:cannot compute average owing to no vector for []
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">tfidf_vec_tr</span> <span class="o">=</span> <span class="n">TfidfEmbeddingVectorizer</span><span class="p">(</span><span class="n">w2v_own</span><span class="p">)</span>
@@ -14461,7 +14452,7 @@ WARNING:root:cannot compute average owing to no vector for []
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>F1: 0.795 | Pr: 0.670 | Re: 1.000 | AUC: 0.458 | Accuracy: 0.660 
+<pre>F1: 0.795 | Pr: 0.670 | Re: 1.000 | AUC: 0.460 | Accuracy: 0.660 
 
 </pre>
 </div>
@@ -14479,7 +14470,7 @@ WARNING:root:cannot compute average owing to no vector for []
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># python -m pymagnitude.converter -i &#39;analysis/data/vectors_w2v.txt&#39; -o &#39;analysis/data/w2v.magnitude&#39;</span>
@@ -14530,7 +14521,7 @@ WARNING:root:cannot compute average owing to no vector for []
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|████████████████████████████████████████████████████████████████████████████████████████████████| 351/351 [00:27&lt;00:00, 12.87it/s]
+<pre>100%|███████████████████████████| 351/351 [00:28&lt;00:00, 12.19it/s]
 </pre>
 </div>
 </div>
@@ -14542,7 +14533,7 @@ WARNING:root:cannot compute average owing to no vector for []
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>F1: 0.803 | Pr: 0.683 | Re: 0.997 | AUC: 0.533 | Accuracy: 0.678 
+<pre>F1: 0.803 | Pr: 0.686 | Re: 0.990 | AUC: 0.529 | Accuracy: 0.680 
 
 </pre>
 </div>
@@ -14560,7 +14551,7 @@ WARNING:root:cannot compute average owing to no vector for []
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="n">lowercase</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">preprocessor</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
@@ -14609,7 +14600,7 @@ WARNING:root:cannot compute average owing to no vector for []
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|██████████████████████████████████████████████████████████████████████████████████████████████| 351/351 [00:00&lt;00:00, 1678.66it/s]
+<pre>100%|█████████████████████████| 351/351 [00:00&lt;00:00, 1408.67it/s]
 </pre>
 </div>
 </div>
@@ -14621,7 +14612,7 @@ WARNING:root:cannot compute average owing to no vector for []
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>F1: 0.808 | Pr: 0.690 | Re: 0.997 | AUC: 0.532 | Accuracy: 0.687 
+<pre>F1: 0.809 | Pr: 0.690 | Re: 0.998 | AUC: 0.530 | Accuracy: 0.688 
 
 </pre>
 </div>
@@ -14640,22 +14631,13 @@ WARNING:root:cannot compute average owing to no vector for []
 <ul>
 <li>GloVe is an unsupervised learning algorithm for obtaining vector representations for words. </li>
 <li>Training is performed on aggregated global word-word co-occurrence statistics.</li>
-<li>The resulting representations showcase interesting linear substructures of the word vector space.</li>
 </ul>
 
 </div>
 </div><div class="fragment">
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<ul>
-<li>Example<ul>
-<li>Co-occurrence probabilities the for target words ice and steam.</li>
-<li>For the ratio, noise from non-discriminative words like water and fashion cancel out.</li>
-<li>Large values (&gt; 1) correlate well with properties specific to ice.</li>
-<li>Small values (&lt; 1) correlate well with properties specific of steam.</li>
-</ul>
-</li>
-</ul>
+<p>Example: Co-occurrence probabilities the for target words ice and steam.</p>
 <table>
 <thead><tr>
 <th>Probability and Ratio</th>
@@ -14691,34 +14673,32 @@ WARNING:root:cannot compute average owing to no vector for []
 </table>
 
 </div>
-</div></div><div class="fragment">
+</div></div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Word2Vec vs. GloVe</p>
 <ul>
-<li>Word2Vec vs. GloVe<ul>
 <li>Word2Vec <ul>
 <li>Relies only on local information of language. </li>
 <li>Local: the semantics learnt for a given word is only affected by the surrounding words.</li>
 </ul>
 </li>
 <li>GloVe<ul>
-<li>Incorporates global and local statistics (word co-occurrence) to obtain word vectors. </li>
-</ul>
-</li>
+<li>Incorporates global (co-occurrence counts) and local statistics to obtain word vectors. </li>
 </ul>
 </li>
 </ul>
 
 </div>
-</div></div></section><section>
+</div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="glove,-pre">glove, pre<a class="anchor-link" href="#glove,-pre">&#182;</a></h2>
+<h2 id="pre,-bow">pre, bow<a class="anchor-link" href="#pre,-bow">&#182;</a></h2>
 </div>
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">glove</span> <span class="o">=</span> <span class="n">Magnitude</span><span class="p">(</span><span class="s1">&#39;data/glove_vec.magnitude&#39;</span><span class="p">)</span>
@@ -14754,7 +14734,7 @@ WARNING:root:cannot compute average owing to no vector for []
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|████████████████████████████████████████████████████████████████████████████████████████████████| 351/351 [00:44&lt;00:00,  7.82it/s]
+<pre>100%|███████████████████████████| 351/351 [00:42&lt;00:00,  8.24it/s]
 </pre>
 </div>
 </div>
@@ -14766,7 +14746,7 @@ WARNING:root:cannot compute average owing to no vector for []
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>F1: 0.804 | Pr: 0.684 | Re: 0.998 | AUC: 0.521 | Accuracy: 0.680 
+<pre>F1: 0.803 | Pr: 0.684 | Re: 0.994 | AUC: 0.520 | Accuracy: 0.678 
 
 </pre>
 </div>
@@ -14779,12 +14759,12 @@ WARNING:root:cannot compute average owing to no vector for []
 </div></div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="pre,-idf">pre, idf<a class="anchor-link" href="#pre,-idf">&#182;</a></h2>
+<h2 id="pre,-tf-idf">pre, tf-idf<a class="anchor-link" href="#pre,-tf-idf">&#182;</a></h2>
 </div>
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="n">lowercase</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">preprocessor</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
@@ -14822,7 +14802,7 @@ WARNING:root:cannot compute average owing to no vector for []
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|██████████████████████████████████████████████████████████████████████████████████████████████| 351/351 [00:00&lt;00:00, 1645.13it/s]
+<pre>100%|█████████████████████████| 351/351 [00:00&lt;00:00, 1605.10it/s]
 </pre>
 </div>
 </div>
@@ -14834,7 +14814,7 @@ WARNING:root:cannot compute average owing to no vector for []
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>F1: 0.802 | Pr: 0.684 | Re: 0.990 | AUC: 0.554 | Accuracy: 0.677 
+<pre>F1: 0.805 | Pr: 0.686 | Re: 0.998 | AUC: 0.552 | Accuracy: 0.682 
 
 </pre>
 </div>
@@ -14850,40 +14830,20 @@ WARNING:root:cannot compute average owing to no vector for []
 <h1 id="fastText">fastText<a class="anchor-link" href="#fastText">&#182;</a></h1><p><a href="https://arxiv.org/abs/1607.01759">Joulin et al. (2016)</a>,
 <a href="https://fasttext.cc">fasttext</a>,
 <a href="https://towardsdatascience.com/fasttext-under-the-hood-11efc57b2b3">Nishan Subedi</a><br></p>
+<p>Strengths</p>
 <ul>
-<li>Strengths:<ul>
 <li>FastText achieves high performance for word representations and sentence classification.</li>
-<li>It performes specially strong in the case of rare words by making use of character level information.</li>
-</ul>
-</li>
+<li>It performs especially strong in the case of rare words by making use of character-level information.</li>
 </ul>
 
 </div>
 </div><div class="fragment">
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<ul>
-<li><p>Bag of character n-grams</p>
+<p>Bag of character n-grams</p>
 <ul>
 <li>Each word is represented as a bag of character n-grams in addition to the word itself. <ul>
 <li>For example: word $matter$; $n = 3$; fastText representation:  <code>&lt;ma, mat, att, tte, ter, er&gt;</code>. </li>
-<li><code>&lt;</code> and <code>&gt;</code> are added as boundary symbols to distinguish the ngram of a word from a word itself.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-</div>
-</div></div><div class="fragment">
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<ul>
-<li>How it works<ul>
-<li>The model is a bag of words model. </li>
-<li>Aside of the sliding window of n-gram selection, there is no internal structure of a word that is taken into account.</li>
-<li>As long as the characters fall under the window, the order of the character n-grams does not matter. </li>
-<li>During the model update, fastText learns weights for each of the n-grams as well as the entire word token.</li>
 </ul>
 </li>
 </ul>
@@ -14892,18 +14852,30 @@ WARNING:root:cannot compute average owing to no vector for []
 </div></div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Load pretrained embeddings</p>
+<p>How it works</p>
 <ul>
-<li>We implemented fastText using logistic regression and sentence embeddings.</li>
-<li>The fasttext API requires C++ Build Tools (Windows) or xtools (macOS).</li>
-<li>These are quite big to install. Therefore, we load pretrained embeddings that were generated in another script.</li>
+<li>The model is a bag of words model. </li>
+<li>Aside from the sliding window of n-gram selection, there is no internal structure of a word that is taken into account.</li>
+<li>As long as the characters fall under the window, the order of the character n-grams does not matter. </li>
+<li>During the model update, fastText learns weights for each of the n-grams as well as the entire word token.</li>
 </ul>
 
 </div>
-</div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="fragment">
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Load pre-trained embeddings</p>
+<ul>
+<li>We implemented fastText using logistic regression and sentence embeddings.</li>
+<li>The fastText API requires C++ Build Tools (Windows) or xtools (macOS).</li>
+<li>These are quite big to install. Therefore, we load pre-trained embeddings that were generated in another script.</li>
+</ul>
+
+</div>
+</div></div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">m_ft_own</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;data/fasttext_embeddings.npy&quot;</span><span class="p">)</span>
@@ -14919,26 +14891,24 @@ WARNING:root:cannot compute average owing to no vector for []
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Doc2Vec">Doc2Vec<a class="anchor-link" href="#Doc2Vec">&#182;</a></h1><p><a href="http://proceedings.mlr.press/v32/le14.html">Le and Mikolov (2014)</a>, 
 <a href="https://towardsdatascience.com/understand-how-to-transfer-your-paragraph-to-vector-by-doc2vec-1e225ccf102">Edward Ma</a> <br></p>
+<p>Intuition</p>
 <ul>
-<li>Intuition<ul>
 <li>Instead of averaging word embeddings over the sequence, we can train paragraph vectors directly. </li>
 <li>We use document embeddings and distributed memory (PV-DM) instead of distributed bag of words. </li>
 <li>Randomly samples adjacent words from a paragraph. </li>
 <li>Predicts a center word from the sampled set by taking the context words and a paragraph id as input.</li>
 </ul>
-</li>
-</ul>
 
 </div>
-</div><div class="fragment">
+</div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>How it works</p>
 <ul>
-<li>How it works<ul>
 <li>Doc2Vec is based on Word2Vec: It learns the document representation in an unsupervised manner.</li>
 <li>Input and output <ul>
 <li>The input of texts (i.e. word) per document can vary.</li>
-<li>The output are vectors of fixed-length.</li>
+<li>The output is vectors of fixed length.</li>
 </ul>
 </li>
 <li>Paragraph and word vectors<ul>
@@ -14949,32 +14919,38 @@ WARNING:root:cannot compute average owing to no vector for []
 <li>Training: Word vectors will be trained while the paragraph will be thrown away after that. </li>
 <li>Prediction: The paragraph vector will be initialized randomly and computed by word vectors.</li>
 </ul>
-</li>
-</ul>
 
 </div>
-</div></div></section><section>
+</div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="PV-DM">PV-DM<a class="anchor-link" href="#PV-DM">&#182;</a></h2><p>Distributed Memory Model of Paragraph Vectors (PV-DM)</p>
+<p>Distributed Memory Model of Paragraph Vectors (PV-DM)</p>
 <ul>
 <li>Both paragraph vectors and word vectors are initialized randomly. </li>
 <li>Every paragraph vector is assigned to a single document while word vectors are shared among all documents. </li>
 <li>Either averaging or concatenating both paragraph and words vectors.</li>
 <li>Both are passed to stochastic gradient descent.</li>
-<li>The gradient is obtained via back propagation.</li>
+<li>The gradient is obtained via backpropagation.</li>
 </ul>
 
 </div>
-</div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div></section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>🤓: Vary parameters in <code>dm_args</code>.</p>
+
+</div>
+</div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[25]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">workers</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
-<span class="n">dm_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dm&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;dm_mean&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;vector_size&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;window&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;negative&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;hs&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;min_count&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-           <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;workers&#39;</span><span class="p">:</span> <span class="n">workers</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.025</span><span class="p">,</span> <span class="s1">&#39;min_alpha&#39;</span><span class="p">:</span> <span class="mf">0.025</span><span class="p">,</span> <span class="s1">&#39;epochs&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+<span class="n">dm_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dm&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;dm_mean&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;vector_size&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;window&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> 
+           <span class="s1">&#39;negative&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;hs&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;min_count&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+           <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;workers&#39;</span><span class="p">:</span> <span class="n">workers</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.025</span><span class="p">,</span> 
+           <span class="s1">&#39;min_alpha&#39;</span><span class="p">:</span> <span class="mf">0.025</span><span class="p">,</span> <span class="s1">&#39;epochs&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
            <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="s1">&#39;alpha=0.025&#39;</span>
            <span class="p">}</span>
 <span class="n">dm</span> <span class="o">=</span> <span class="n">DocModel</span><span class="p">(</span><span class="n">docs</span><span class="o">=</span><span class="n">all_docs</span><span class="o">.</span><span class="n">tagdocs</span><span class="p">,</span> <span class="o">**</span><span class="n">dm_args</span><span class="p">)</span>
@@ -14983,18 +14959,20 @@ WARNING:root:cannot compute average owing to no vector for []
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dm</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dv</span><span class="p">)):</span>
     <span class="n">dm_doc_vec_ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dm</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dv</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 <span class="n">dm_doc_vec</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dm_doc_vec_ls</span><span class="p">)</span>
+</pre></div>
 
-<span class="n">train_idx</span><span class="p">,</span> <span class="n">test_idx</span> <span class="o">=</span> <span class="n">str_grp_splt</span><span class="p">(</span><span class="n">df_prep</span><span class="p">,</span>
-                                   <span class="n">grp_col_name</span><span class="o">=</span><span class="s2">&quot;group&quot;</span><span class="p">,</span>
-                                   <span class="n">y_col_name</span><span class="o">=</span><span class="s2">&quot;honestmean&quot;</span><span class="p">,</span>
-                                   <span class="n">train_share</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
-<span class="n">train_X</span> <span class="o">=</span> <span class="n">dm_doc_vec</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">train_idx</span><span class="p">]</span>
-<span class="n">test_X</span> <span class="o">=</span> <span class="n">dm_doc_vec</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">test_idx</span><span class="p">]</span>
-<span class="n">train_y</span> <span class="o">=</span> <span class="n">df_prep</span><span class="p">[</span><span class="s2">&quot;honestmean&quot;</span><span class="p">][</span><span class="n">train_idx</span><span class="p">]</span>
-<span class="n">test_y</span> <span class="o">=</span> <span class="n">df_prep</span><span class="p">[</span><span class="s2">&quot;honestmean&quot;</span><span class="p">][</span><span class="n">test_idx</span><span class="p">]</span>
-<span class="n">train_X</span><span class="p">,</span> <span class="n">train_y</span> <span class="o">=</span> <span class="n">ros</span><span class="o">.</span><span class="n">fit_resample</span><span class="p">(</span><span class="n">train_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
+     </div>
+</div>
+</div>
+</div>
 
-<span class="n">m_dm_doc_vec</span> <span class="o">=</span> <span class="n">run_log_reg</span><span class="p">(</span><span class="n">train_X</span><span class="p">,</span> <span class="n">test_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)</span>
+</div></div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[27]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m_dm_doc_vec</span> <span class="o">=</span> <span class="n">run_log_reg</span><span class="p">(</span><span class="n">train_X</span><span class="p">,</span> <span class="n">test_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -15014,7 +14992,7 @@ WARNING:root:cannot compute average owing to no vector for []
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>F1: 0.805 | Pr: 0.691 | Re: 0.987 | AUC: 0.555 | Accuracy: 0.684 
+<pre>F1: 0.803 | Pr: 0.695 | Re: 0.975 | AUC: 0.558 | Accuracy: 0.684 
 
 </pre>
 </div>
@@ -15032,7 +15010,7 @@ WARNING:root:cannot compute average owing to no vector for []
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[28]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">m_bow</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">m_tfidf</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
@@ -15064,7 +15042,7 @@ WARNING:root:cannot compute average owing to no vector for []
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[28]:</div>
 
 
 
@@ -15097,74 +15075,74 @@ WARNING:root:cannot compute average owing to no vector for []
   <tbody>
     <tr>
       <th>w2v (pre, tfidf)</th>
-      <td>0.807847</td>
-      <td>0.690135</td>
-      <td>0.996825</td>
-      <td>0.532002</td>
-      <td>0.687234</td>
+      <td>0.808629</td>
+      <td>0.690477</td>
+      <td>0.998413</td>
+      <td>0.530312</td>
+      <td>0.688298</td>
+    </tr>
+    <tr>
+      <th>glove (pre, tfidf)</th>
+      <td>0.805485</td>
+      <td>0.685994</td>
+      <td>0.998413</td>
+      <td>0.551767</td>
+      <td>0.681915</td>
     </tr>
     <tr>
       <th>w2v (own, smpl)</th>
       <td>0.805195</td>
       <td>0.684783</td>
       <td>1.000000</td>
-      <td>0.525499</td>
+      <td>0.525038</td>
       <td>0.680851</td>
     </tr>
     <tr>
+      <th>w2v (pre, smpl)</th>
+      <td>0.803132</td>
+      <td>0.686489</td>
+      <td>0.990476</td>
+      <td>0.529391</td>
+      <td>0.679787</td>
+    </tr>
+    <tr>
       <th>dm_doc_vec</th>
-      <td>0.804973</td>
-      <td>0.691490</td>
-      <td>0.987302</td>
-      <td>0.554813</td>
+      <td>0.802846</td>
+      <td>0.695345</td>
+      <td>0.974603</td>
+      <td>0.558269</td>
       <td>0.684043</td>
     </tr>
     <tr>
       <th>glove (pre, smpl)</th>
-      <td>0.804414</td>
-      <td>0.684436</td>
-      <td>0.998413</td>
-      <td>0.521096</td>
-      <td>0.679787</td>
-    </tr>
-    <tr>
-      <th>w2v (pre, smpl)</th>
-      <td>0.803125</td>
-      <td>0.683390</td>
-      <td>0.996825</td>
-      <td>0.533282</td>
+      <td>0.802584</td>
+      <td>0.684151</td>
+      <td>0.993651</td>
+      <td>0.519918</td>
       <td>0.677660</td>
     </tr>
     <tr>
       <th>bow</th>
-      <td>0.802391</td>
-      <td>0.686352</td>
-      <td>0.988889</td>
-      <td>0.559601</td>
-      <td>0.678723</td>
-    </tr>
-    <tr>
-      <th>glove (pre, tfidf)</th>
-      <td>0.801592</td>
-      <td>0.684436</td>
-      <td>0.990476</td>
-      <td>0.554378</td>
+      <td>0.801063</td>
+      <td>0.685239</td>
+      <td>0.987302</td>
+      <td>0.562698</td>
       <td>0.676596</td>
     </tr>
     <tr>
       <th>tfidf</th>
-      <td>0.795385</td>
-      <td>0.670933</td>
-      <td>1.000000</td>
-      <td>0.552944</td>
-      <td>0.660638</td>
+      <td>0.795627</td>
+      <td>0.673680</td>
+      <td>0.995238</td>
+      <td>0.555760</td>
+      <td>0.662766</td>
     </tr>
     <tr>
       <th>w2v (own, tfidf)</th>
       <td>0.794872</td>
       <td>0.670213</td>
       <td>1.000000</td>
-      <td>0.458218</td>
+      <td>0.460471</td>
       <td>0.659574</td>
     </tr>
     <tr>
@@ -15186,7 +15164,12 @@ WARNING:root:cannot compute average owing to no vector for []
 
 </div>
 
-</div></div></section></section>
+</div></div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="It's-your-turn!-%F0%9F%A7%91%E2%80%8D%F0%9F%92%BB-~15'">It's your turn! &#129489;&#8205;&#128187; ~15'<a class="anchor-link" href="#It's-your-turn!-%F0%9F%A7%91%E2%80%8D%F0%9F%92%BB-~15'">&#182;</a></h1>
+</div>
+</div></section></section>
 </div>
 </div>
 </body>

@@ -106,6 +106,9 @@ This is an application-based course, focusing on R and Python as programming lan
 
 # Session 1
 
+## Introduction
+:teacher: 15'
+
 ## Political Speech
 
 :chart_with_upwards_trend: [Plenarprotokolle Deutscher Bundestag](https://www.bundestag.de/dokumente/protokolle/plenarprotokolle), [New York Times front pages](http://www.amber-boydstun.com/supplementary-information-for-making-the-news.html), 
@@ -128,8 +131,7 @@ This is an application-based course, focusing on R and Python as programming lan
       * Wordscore ([Laver et al. (2003)](https://www.cambridge.org/core/journals/american-political-science-review/article/extracting-policy-positions-from-political-texts-using-words-as-data/4F4676E80A79E01EAAB88EF3F2D1B733)) 
       * Wordfish ([Slapin (2008)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-5907.2008.00338.x))
       * Wordshoal ([Lauderdale (2016)](https://www.cambridge.org/core/journals/political-analysis/article/measuring-political-positions-from-legislative-speech/35D8B53C4B7367185325C25BBE5F42B4))
-    * Measuring divisiveness in political speech ([Ash (2017)](https://www.journals.uchicago.edu/doi/full/10.1086/692587?af=R&mobileUi=0)) :teacher: 12', :technologist: 12'
-## :fox_face: Quiz time! :technologist: 5'
+## :fox_face: Quiz time! 10'
     
 #  Session 2 
 
@@ -137,11 +139,11 @@ This is an application-based course, focusing on R and Python as programming lan
 :chart_with_upwards_trend: Tax reports from German companies listed in the STOXX Europe 600.
 * Programming language: Python (mostly [scikit-learn](https://scikit-learn.org/stable/))
 * Methods
-  * :teacher: 15', :technologist: 15'
-  * Text preprocessing ([Stemming, Lemmatization](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html))
-  * Train/Test split
-  * [Feature extraction](https://scikit-learn.org/stable/modules/feature_extraction.html)
-  * Classification :teacher: 15', :technologist: 15'
+  * :teacher: 10', :technologist: 10'
+    * Text preprocessing ([Stemming, Lemmatization](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html))
+    * Train/Test split
+    * [Feature extraction](https://scikit-learn.org/stable/modules/feature_extraction.html)
+  * Classification :teacher: 10', :technologist: 10'
     * [Multinomial Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html#multinomial-naive-bayes) 
     * [Passive Aggressive Algorithms](https://scikit-learn.org/stable/modules/linear_model.html#passive-aggressive-algorithms)
     * [Support Vector Machines](https://scikit-learn.org/stable/modules/svm.html#classification)
@@ -169,7 +171,7 @@ This is an application-based course, focusing on R and Python as programming lan
     * GloVe ([Pennington (2014)](https://aclanthology.org/D14-1162.pdf))
     * fastText ([Joulin (2016)](https://arxiv.org/pdf/1607.01759.pdf?fbclid=IwAR1wttEXho2gqk3BasKDuncgftN5I5lmH2TbIgvGuHxfutM3IavbateHH9A))
     * Doc2Vec (PV-DM) ([Le (2014)](http://proceedings.mlr.press/v32/le14.html))
-  * Classification :teacher: 20', :technologist: 20'
+  * Classification :teacher: 15', :technologist: 15'
     * [Tuning Hyperparametes](https://scikit-learn.org/stable/modules/grid_search.html#grid-search)
     * [Cross-validation](https://scikit-learn.org/stable/modules/cross_validation.html#cross-validation)
     * Models
@@ -179,14 +181,13 @@ This is an application-based course, focusing on R and Python as programming lan
         * [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
         * [bagging classifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.BaggingClassifier.html)
         * [stacked generalization](https://scikit-learn.org/stable/modules/ensemble.html#stacked-generalization)
-## :fox_face: Quiz time! :technologist: 15'
+## :fox_face: Quiz time! 15'
 
- # Session 4 
-  * :teacher: 10', :technologist: 10'
-    * Parallelization
-    * Scoring 
-      * [Accuracy, precision, recall, f1-score, AUC](https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics)
-      * Evaluate within and across datasets ([Straube (2014)](https://www.frontiersin.org/articles/10.3389/fncom.2014.00043/full))
+ # Session 4
+* Parallelization :teacher: 5'
+* Scoring :teacher: 10', :technologist: 10'
+  * [Accuracy, precision, recall, f1-score, AUC](https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics)
+  * Evaluate within and across datasets ([Straube (2014)](https://www.frontiersin.org/articles/10.3389/fncom.2014.00043/full))
     
 
 ## Ideological Direction in Judicial Opinion
@@ -198,10 +199,10 @@ This is an application-based course, focusing on R and Python as programming lan
   * [Probability calibration](https://scikit-learn.org/stable/modules/calibration.html#) :teacher: 5', :technologist: 10'
 
 ## Further Techniques
-* Sentiment Analysis with LSTM :teacher: 10', :technologist: 10'
-* RCNN ([Lai et al. (2015)](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewPaper/9745)) :teacher: 10', :technologist: 10'
+* Sentiment Analysis with LSTM :teacher: 7', :technologist: 7'
+* RCNN ([Lai et al. (2015)](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewPaper/9745)) :teacher: 7', :technologist: 7'
 
-## :fox_face: Quiz time! :technologist: 10'
+## :fox_face: Quiz time! 5'
 
 # Session 5
 
@@ -219,12 +220,12 @@ This is an application-based course, focusing on R and Python as programming lan
 ## Tax Risk Management (II)
 :chart_with_upwards_trend: Tax reports from German companies listed in the STOXX Europe 600.
 * Programming language: Python (mostly [scikit-learn](https://scikit-learn.org/stable/))
-* Methods :teacher: 15', :technologist: 15'
+* Methods :teacher: 10', :technologist: 10'
   * Clustering ([K-means](https://scikit-learn.org/stable/modules/clustering.html#k-means))
   * Visualize high-dimensional data ([t-SNE](https://scikit-learn.org/stable/modules/manifold.html#t-sne))
   * Topic Models ([NFM](https://scikit-learn.org/stable/modules/decomposition.html#non-negative-matrix-factorization-nmf-or-nnmf), [LDA](https://scikit-learn.org/stable/modules/decomposition.html#latent-dirichlet-allocation-lda))
 
-## :fox_face: Quiz time! :technologist: 10'           
+## :fox_face: Quiz time! 15'           
     
 # Acknowledgements
 

@@ -7,17 +7,17 @@ output:
   ioslides_presentation:
     widescreen: true
     smaller: true
-bibliography: ss21.bib 
 ---
 
 ```{r setup, include=FALSE}
 rm(list=ls())
-knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(viridis)
 library(hrbrthemes)
+library(readr)
 ```
 
 ```{r read, include=FALSE}
@@ -26,48 +26,269 @@ df2<-df[,18:35]
 df2<-df2[-1,-c(10,12)]
 ```
 
+## Programming Language
 ```{r language, echo=FALSE, fig.align='center'}
-df2 %>% count(`python (3)`,`R/RStudio`)%>% 
+df2 %>% count(`python (3)`,`R/RStudio`) %>% 
+  drop_na() %>%
   pivot_longer(cols = `python (3)`:`R/RStudio`,names_to = c("language"),values_to = "choice")%>%
   ggplot(., aes(fill=choice, y=n, x=language)) + 
     geom_bar(position="stack", stat="identity") +
     scale_fill_viridis(discrete = T) +
-    ggtitle("Programming Language") +
+    ggtitle("Python and R") +
     theme_ipsum() +
     xlab("")
 ```
-         geom_bar(stat='identity')
-```{r git, echo=FALSE}
+
+## Where to code?
+```{r prefer, echo=FALSE, fig.align='center'}
+df2 %>% count(`I prefer...`)%>%
+  drop_na() %>%
+    ggplot(., aes(x=`I prefer...`, y=n, fill=factor(n)))+
+              geom_bar(stat='identity')+
+    scale_fill_viridis(discrete = T) +
+    ggtitle("I prefer") +
+    theme_ipsum() +
+    xlab("")
+``` 
+
+## Where to find code?
+```{r git, echo=FALSE, fig.align='center'}
 df2 %>% count(`Git (version control)`)%>%
+  drop_na() %>%
     ggplot(., aes(x=`Git (version control)`, y=n, fill=factor(n)))+
               geom_bar(stat='identity')+
     scale_fill_viridis(discrete = T) +
-    ggtitle("Git (version control)") +
+    ggtitle("Git") +
     theme_ipsum() +
     xlab("")
 ```
 
-```{r prefer, echo=FALSE}
-df2 %>% count(`I prefer...`)%>%
-    ggplot(., aes(x=`I prefer...`, y=n))+
-              geom_bar(stat='identity')
+## How to install?
+```{r venv_pip, echo=FALSE, fig.align='center'}
+df2 %>% count(`I use... - venv`,`I use... - pip`)%>% 
+  drop_na() %>%
+  pivot_longer(cols = `I use... - venv`:`I use... - pip`, names_to = c("language"),values_to = "choice")%>%
+  ggplot(., aes(fill=choice, y=n, x=language)) + 
+    geom_bar(position="stack", stat="identity") +
+    scale_fill_viridis(discrete = T) +
+    ggtitle("Venv/pip") +
+    theme_ipsum() +
+    xlab("")
 ``` 
 
-```{r venv, include=FALSE}
-df2 %>% count(`I use... - venv`)%>%
-    ggplot(., aes(x=`I use... - venv`, y=n))+
-              geom_bar(stat='identity')
-``` 
-```{r pip, include=FALSE}
-df2$`Some topics - wordscore/wordfish/wordshoal`
-df2 %>% count(`I use... - pip`)%>%
-    ggplot(., aes(x=`I use... - pip`, y=n))+
-              geom_bar(stat='identity')
-``` 
-```{r pip, include=FALSE}
-df2$`Some topics - wordscore/wordfish/wordshoal`
-df2 %>% count(`I use... - pip`)%>%
-    ggplot(., aes(x=`I use... - pip`, y=n))+
-              geom_bar(stat='identity')
+
+# Session 1
+
+## Political Speech
+
+`r emo::ji("chart_with_upwards_trend")` [Plenarprotokolle Deutscher Bundestag](https://www.bundestag.de/dokumente/protokolle/plenarprotokolle), [New York Times front pages](http://www.amber-boydstun.com/supplementary-information-for-making-the-news.html), 
+[Manifestos Project Database](https://manifestoproject.wzb.eu)
+
+* Programming language: R (mainly [quanteda](https://quanteda.io))
+* Methods
+    * Descriptive Methods `r emo::ji("teacher")` 12', `r emo::ji("technologist")` 12'
+      * Corpus, types, tokens, sentences
+      * Readability scores ([overview](https://quanteda.io/reference/textstat_readability.html), [Flesch (1948)](https://psycnet.apa.org/record/1949-01274-001))
+      * Dfm
+      * [Comparing texts](https://quanteda.io/reference/textstat_simil.html) (e.g. via cosine similarity)
+      * Keywords in context
+    * Classification `r emo::ji("teacher")` 12', `r emo::ji("technologist")` 12'
+      * [Train/Test split](https://towardsdatascience.com/train-validation-and-test-sets-72cb40cba9e7) 
+      * Naive Bayes Classifier ([Schütze et al. (2008), ch 13](https://nlp.stanford.edu/IR-book/pdf/irbookonlinereading.pdf))
+      * Importance of sampling
+      * Evaluation metrics
+      
+---
+
+  * Scaling models `r emo::ji("teacher")` 12', `r emo::ji("technologist")` 12'
+    * Wordscore ([Laver et al. (2003)](https://www.cambridge.org/core/journals/american-political-science-review/article/extracting-policy-positions-from-political-texts-using-words-as-data/4F4676E80A79E01EAAB88EF3F2D1B733)) 
+    * Wordfish ([Slapin (2008)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-5907.2008.00338.x))
+    * Wordshoal ([Lauderdale (2016)](https://www.cambridge.org/core/journals/political-analysis/article/measuring-political-positions-from-legislative-speech/35D8B53C4B7367185325C25BBE5F42B4))
+  * Measuring divisiveness in political speech ([Ash (2017)](https://www.journals.uchicago.edu/doi/full/10.1086/692587?af=R&mobileUi=0)) `r emo::ji("teacher")` 12', `r emo::ji("technologist")` 12'
+
+ 
+```{r some_word, echo=FALSE, fig.align='center'}
+df2 %>% count(`Some topics - wordscore/wordfish/wordshoal`)%>%
+  drop_na() %>%
+  ggplot(., aes(x=`Some topics - wordscore/wordfish/wordshoal`, y=n, fill=factor(n)))+
+              geom_bar(stat='identity')+
+    scale_fill_viridis(discrete = T) +
+    ggtitle("Scaling Models") +
+    theme_ipsum() +
+    xlab("")
 ``` 
 
+    
+#  Session 2 
+
+## Tax Risk Management (I)
+`r emo::ji("chart_with_upwards_trend")` Tax reports from German companies listed in the STOXX Europe 600.
+
+* Programming language: Python (mostly [scikit-learn](https://scikit-learn.org/stable/))
+* Methods
+  * `r emo::ji("teacher")` 10', `r emo::ji("technologist")` 10'
+    * Text preprocessing ([Stemming, Lemmatization](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html))
+    * Train/Test split
+    * [Feature extraction](https://scikit-learn.org/stable/modules/feature_extraction.html)
+    
+---
+
+  * Classification `r emo::ji("teacher")` 10', `r emo::ji("technologist")` 10'
+    * [Multinomial Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html#multinomial-naive-bayes) 
+    * [Passive Aggressive Algorithms](https://scikit-learn.org/stable/modules/linear_model.html#passive-aggressive-algorithms)
+    * [Support Vector Machines](https://scikit-learn.org/stable/modules/svm.html#classification)
+    * Gazetteer/Entity Dictionary
+
+```{r some_class, echo=FALSE, fig.align='center'}
+df2 %>% count(`Some topics - classification, e.g. KNN, SVM, RF, NB, NN, XGBoost`)%>%
+  drop_na() %>%
+  ggplot(., aes(x=`Some topics - classification, e.g. KNN, SVM, RF, NB, NN, XGBoost`, y=n, fill=factor(n)))+
+              geom_bar(stat='identity')+
+    scale_fill_viridis(discrete = T) +
+    ggtitle("Classification, e.g. KNN, SVM, RF, NB, NN") +
+    theme_ipsum() +
+    xlab("")
+```  
+
+## Predicting (Non) Compliance
+
+`r emo::ji("chart_with_upwards_trend")` chat data from a [laboratory experiment](https://www.socialscienceregistry.org/trials/5049)
+
+* Programming language: Python (mostly [scikit-learn](https://scikit-learn.org/stable/))
+* Presentation: Chapter 2 from my [dissertation](https://kups.ub.uni-koeln.de/12231/) `r emo::ji("teacher")` 15'
+
+# Session 3
+## Predicting (Non) Compliance—Continued
+
+* Methods
+  * Feature engineering `r emo::ji("teacher")` 10', `r emo::ji("technologist")` 10'
+    * Input: concatenating chat on different levels (individuals, versus groups)
+    * Output: applying different thresholds to binarize the continuous dependent variable
+    * Sampling ([oversampling](https://imbalanced-learn.org/stable/over_sampling.html#random-over-sampler))
+    * [Stratified Group Shuffle Split](https://stackoverflow.com/questions/56872664/complex-dataset-split-stratifiedgroupshufflesplit)
+  * Embeddings `r emo::ji("teacher")` 15', `r emo::ji("technologist")` 15'
+    * Word2Vec ([Mikolov (2013)](https://arxiv.org/abs/1301.3781))
+    * GloVe ([Pennington (2014)](https://aclanthology.org/D14-1162.pdf))
+    * fastText ([Joulin (2016)](https://arxiv.org/pdf/1607.01759.pdf?fbclid=IwAR1wttEXho2gqk3BasKDuncgftN5I5lmH2TbIgvGuHxfutM3IavbateHH9A))
+    * Doc2Vec (PV-DM) ([Le (2014)](http://proceedings.mlr.press/v32/le14.html))
+
+---
+
+  * Classification `r emo::ji("teacher")` 15', `r emo::ji("technologist")` 15'
+    * [Tuning Hyperparametes](https://scikit-learn.org/stable/modules/grid_search.html#grid-search)
+    * [Cross-validation](https://scikit-learn.org/stable/modules/cross_validation.html#cross-validation)
+    * Models
+      * [Linear classifier (log loss) with SGD training](https://scikit-learn.org/stable/modules/sgd.html#sgd)
+      * [KNN](https://scikit-learn.org/stable/modules/neighbors.html#classification)
+ 
+---
+
+  * [ensemble methods](https://scikit-learn.org/stable/modules/ensemble.html)
+    * [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
+    * [bagging classifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.BaggingClassifier.html)
+    * [stacked generalization](https://scikit-learn.org/stable/modules/ensemble.html#stacked-generalization)
+        
+```{r some_bagging, echo=FALSE, fig.align='center'}
+df2 %>% count(`Some topics - bagging/boosting`)%>%
+  drop_na() %>%
+  ggplot(., aes(x=`Some topics - bagging/boosting`, y=n, fill=factor(n)))+
+              geom_bar(stat='identity')+
+    scale_fill_viridis(discrete = T) +
+    ggtitle("") +
+    theme_ipsum() +
+    xlab("")
+``` 
+
+# Session 4
+## Predicting (Non) Compliance—Continued
+
+* Parallelization `r emo::ji("technologist")` 5'
+* Scoring `r emo::ji("teacher")` 10', `r emo::ji("technologist")` 10'
+  * [Accuracy, precision, recall, f1-score, AUC](https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics)
+  * Evaluate within and across datasets ([Straube (2014)](https://www.frontiersin.org/articles/10.3389/fncom.2014.00043/full))
+    
+```{r some_parallel, echo=FALSE, fig.align='center'}
+df2 %>% count(`Some topics - parallel processing`)%>%
+  drop_na() %>%
+  ggplot(., aes(x=`Some topics - parallel processing`, y=n, fill=factor(n)))+
+              geom_bar(stat='identity')+
+    scale_fill_viridis(discrete = T) +
+    ggtitle("Parallel processing") +
+    theme_ipsum() +
+    xlab("")
+``` 
+
+## Ideological Direction in Judicial Opinion
+`r emo::ji("chart_with_upwards_trend")` US Circuit Court judicial decisions
+
+* Programming language: Python (mostly [scikit-learn](https://scikit-learn.org/stable/))
+* Presentation: [Hausladen et al. 2020](https://www.sciencedirect.com/science/article/pii/S0144818819303667) `r emo::ji("teacher")` 15'
+* Methods
+  * Feature engineering: exploiting the specific structure of judicial texts (citations/quotations)
+  * [Probability calibration](https://scikit-learn.org/stable/modules/calibration.html#) `r emo::ji("teacher")` 5', `r emo::ji("technologist")` 10'
+  
+```{r some_probcal, echo=FALSE, fig.align='center', fig.height=3}
+df2 %>% count(`Some topics - probability calibration`)%>%
+  drop_na() %>%
+  ggplot(., aes(x=`Some topics - probability calibration`, y=n, fill=factor(n)))+
+              geom_bar(stat='identity')+
+    scale_fill_viridis(discrete = T) +
+    ggtitle("Probability calibration") +
+    theme_ipsum() +
+    xlab("")
+``` 
+
+## Further Techniques
+* Sentiment Analysis with LSTM `r emo::ji("teacher")` 7', `r emo::ji("technologist")` 7'
+* RCNN ([Lai et al. (2015)](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewPaper/9745)) `r emo::ji("teacher")` 7', `r emo::ji("technologist")` 7'
+
+```{r some_senti, echo=FALSE, fig.align='center'}
+df2 %>% count(`Some topics - sentiment analysis`)%>%
+  drop_na() %>%
+  ggplot(., aes(x=`Some topics - sentiment analysis`, y=n, fill=factor(n)))+
+              geom_bar(stat='identity')+
+    scale_fill_viridis(discrete = T) +
+    ggtitle("Sentiment Analysis") +
+    theme_ipsum() +
+    xlab("")
+``` 
+
+# Session 5
+
+## Charting the Type Space
+
+`r emo::ji("chart_with_upwards_trend")` simulated decision data from a multi-stage public good game
+
+* Programming language: R (mostly [dtw clust](https://cran.r-project.org/web/packages/dtwclust/dtwclust.pdf))
+* Presentation: Chapter 3 of my [dissertation](https://kups.ub.uni-koeln.de/12231/) `r emo::ji("teacher")` 15'
+* Methods ([Sarda-Espinosa (2017)](https://mran.microsoft.com/snapshot/2018-07-24/web/packages/dtwclust/vignettes/dtwclust.pdf)) `r emo::ji("teacher")` 20', `r emo::ji("technologist")` 20'
+    * distance measures (dtw, sdtw)
+    * prototypes (dba)
+    * clustering algorithms (hierarchical, partitional)
+    * cluster evaluation (e.g. majority vote of different indices)
+
+```{r some_clust, echo=FALSE, fig.align='center', fig.height=3}
+df2 %>% count(`Some topics - clustering, e.g. cluster evaluation/centroid functions/distance measures`)%>%
+  drop_na() %>%
+  ggplot(., aes(x=`Some topics - clustering, e.g. cluster evaluation/centroid functions/distance measures`, y=n, fill=factor(n)))+
+              geom_bar(stat='identity')+
+    scale_fill_viridis(discrete = T) +
+    ggtitle("") +
+    theme_ipsum() +
+    xlab("")
+``` 
+    
+## Tax Risk Management (II)
+
+`r emo::ji("chart_with_upwards_trend")` Tax reports from German companies listed in the STOXX Europe 600.
+
+* Programming language: Python (mostly [scikit-learn](https://scikit-learn.org/stable/))
+* Methods `r emo::ji("teacher")` 10', `r emo::ji("technologist")` 10'
+  * Clustering ([K-means](https://scikit-learn.org/stable/modules/clustering.html#k-means))
+  * Visualize high-dimensional data ([t-SNE](https://scikit-learn.org/stable/modules/manifold.html#t-sne))
+  * Topic Models ([NFM](https://scikit-learn.org/stable/modules/decomposition.html#non-negative-matrix-factorization-nmf-or-nnmf), [LDA](https://scikit-learn.org/stable/modules/decomposition.html#latent-dirichlet-allocation-lda))
+
+# Let's compete for Swiss chocolate! 
+After every session, it's quiz time.
+`r emo::ji("fox")` 
+  
