@@ -107,7 +107,7 @@ This is an application-based course, focusing on R and Python as programming lan
 # Session 1
 
 ## Introduction
-:teacher: 15'
+:teacher: 13'
 
 ## Political Speech
 
@@ -127,7 +127,7 @@ This is an application-based course, focusing on R and Python as programming lan
       * Naive Bayes Classifier ([Schütze et al. (2008), ch 13](https://nlp.stanford.edu/IR-book/pdf/irbookonlinereading.pdf))
       * Importance of sampling
       * Evaluation metrics
-    * Scaling models :teacher: 12', :technologist: 12'
+    * Scaling models :teacher: 14', :technologist: 12'
       * Wordscore ([Laver et al. (2003)](https://www.cambridge.org/core/journals/american-political-science-review/article/extracting-policy-positions-from-political-texts-using-words-as-data/4F4676E80A79E01EAAB88EF3F2D1B733)) 
       * Wordfish ([Slapin (2008)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-5907.2008.00338.x))
       * Wordshoal ([Lauderdale (2016)](https://www.cambridge.org/core/journals/political-analysis/article/measuring-political-positions-from-legislative-speech/35D8B53C4B7367185325C25BBE5F42B4))
@@ -165,7 +165,6 @@ This is an application-based course, focusing on R and Python as programming lan
     * Input: concatenating chat on different levels (individuals, versus groups)
     * Output: applying different thresholds to binarize the continuous dependent variable
     * Sampling ([oversampling](https://imbalanced-learn.org/stable/over_sampling.html#random-over-sampler))
-    * [Stratified Group Shuffle Split](https://stackoverflow.com/questions/56872664/complex-dataset-split-stratifiedgroupshufflesplit)
   * Embeddings :teacher: 15', :technologist: 15'
     * Word2Vec ([Mikolov (2013)](https://arxiv.org/abs/1301.3781))
     * GloVe ([Pennington (2014)](https://aclanthology.org/D14-1162.pdf))
@@ -194,13 +193,11 @@ This is an application-based course, focusing on R and Python as programming lan
 :chart_with_upwards_trend: US Circuit Court judicial decisions
 * Programming language: Python (mostly [scikit-learn](https://scikit-learn.org/stable/))
 * Presentation: [Hausladen et al. 2020](https://www.sciencedirect.com/science/article/pii/S0144818819303667) :teacher: 15'
-* Methods
-  * Feature engineering: exploiting the specific structure of judicial texts (citations/quotations)
-  * [Probability calibration](https://scikit-learn.org/stable/modules/calibration.html#) :teacher: 5', :technologist: 10'
+* Methods: [Probability calibration](https://scikit-learn.org/stable/modules/calibration.html#) :teacher: 7', :technologist: 10'
 
 ## Further Techniques
-* Sentiment Analysis with LSTM :teacher: 7', :technologist: 7'
-* RCNN ([Lai et al. (2015)](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewPaper/9745)) :teacher: 7', :technologist: 7'
+* Sentiment Analysis with LSTM :teacher: 10', :technologist: 10'
+* RCNN ([Lai et al. (2015)](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewPaper/9745)) :teacher: 8', :technologist: 10'
 
 ## :fox_face: Quiz time! 5'
 

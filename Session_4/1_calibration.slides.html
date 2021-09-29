@@ -14140,7 +14140,7 @@ div.jp-OutputPrompt {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>2021-09-24
+<pre>2021-09-29
 </pre>
 </div>
 </div>
@@ -14156,14 +14156,14 @@ div.jp-OutputPrompt {
 <h1 id="Well-calibrated-classifiers">Well calibrated classifiers<a class="anchor-link" href="#Well-calibrated-classifiers">&#182;</a></h1><ul>
 <li>For probabilistic classifiers, the output can be directly interpreted as a confidence level. </li>
 <li>Example: A classifier should classify the samples such that among the samples to which it assigned a predicted probability value close to 0.8, approx. 80% actually belong to the positive class.</li>
-<li>A logistic regression returns well calibrated predictions as it directly optimizes log-loss. </li>
+<li>A logistic regression returns well-calibrated predictions as it directly optimizes log-loss.</li>
 </ul>
 
 </div>
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Not-so-well-calibrated-classifiers">Not so well calibrated classifiers<a class="anchor-link" href="#Not-so-well-calibrated-classifiers">&#182;</a></h1>
+<h1 id="Not-so-well-calibrated-classifiers">Not so well-calibrated classifiers<a class="anchor-link" href="#Not-so-well-calibrated-classifiers">&#182;</a></h1>
 </div>
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
@@ -14210,7 +14210,7 @@ div.jp-OutputPrompt {
 <ul>
 <li><code>GaussianNaiveBayes</code><ul>
 <li>Tends to push probabilities to 0 or 1.</li>
-<li>It makes the assumption that features are conditionally independent given the class.</li>
+<li>It assumes that features are conditionally independent given the class.</li>
 <li>This is not the case in this dataset (containing 2 redundant features).</li>
 </ul>
 </li>
@@ -14345,6 +14345,11 @@ div.jp-OutputPrompt {
 </ul>
 <p>🤓: Use <code>CalibratedClassifierCV</code> to train and calibrate a classifier of your choice. Plot it.</p>
 
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="It's-your-turn!-%F0%9F%A7%91%E2%80%8D%F0%9F%92%BB-~10'">It's your turn! &#129489;&#8205;&#128187; ~10'<a class="anchor-link" href="#It's-your-turn!-%F0%9F%A7%91%E2%80%8D%F0%9F%92%BB-~10'">&#182;</a></h1>
 </div>
 </div></section></section>
 </div>

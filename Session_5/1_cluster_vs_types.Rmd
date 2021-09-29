@@ -21,14 +21,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## This tutorial
 
-- In this tutorial we will investigate the characteristics of clustering.
+- In this tutorial, we will investigate the characteristics of clustering.
 - We will look at the following concepts
   - distance measures
   - prototypes
   - clustering algorithms
   - cluster evaluation
 - We will do so by making use of the R package `dtwclust`.
-- We will investigate the methodology on a concrete example: We cluster (simulated) behavioral data from a public good game.
+- We will investigate the methodology on a concrete example: We cluster (simulated) behavioural data from a public good game.
 
 - We will see that the algorithm does a reasonably good job at clustering the data. 
 - It clusters patterns of observed contributions, combined with patterns of observed experiences. 
@@ -54,7 +54,7 @@ source("scr_r/helpers.r")
 
 ## Simulate Type Space
 - We simulate decision data from a public goods game with 10 rounds, group size 4, and endowment 20.
-- We simulate 5 behavioral types: short-sighted freerider, far-sighted freerider, conditional cooperator, hump shaped contributor, altruist.
+- We simulate 5 behavioural types: short-sighted freerider, far-sighted freerider, conditional cooperator, hump-shaped contributor, altruist.
 - Each type has a certain reaction function, but it does not act upon it at all times. Therefore, we add noise ($\sigma$ and $\eta$).
 
 `r emo::ji("nerd")`: Vary some parameter, e.g. numrounds, sigma, eta, grpsize, endowment.
@@ -88,7 +88,7 @@ ls <- reinterpolate(x = ls, n = max(simdat_grp$period)-1, multivariate = TRUE)
 
 # Distance Measures
 ## What are Distance Measures?
-- Distance measures provide quantification for the dissimilarity between two time-series. 
+- Distance measures provide quantification for the dissimilarity between two time series. 
 - It is a task that is repeated very often and loops across all data objects applying a suitable distance function. 
 
 ### Characteristics of distance measures implemented in dtwclust. 
@@ -102,7 +102,7 @@ knitr::include_graphics("figures/distance_measures.png")
 ### Dynamic Time Warping
 - DTW is a dynamic programming algorithm that compares two series and tries to find the optimum warping path between them. 
 - DTW is computationally expensive. If $x$ has length $n$ and $y$ has length $m$, the DTW distance between them can be computed in $O(nm)$ time, which is quadratic if $m$ and $n$ are similar. 
-- The DTW distance can deal with series of different length. 
+- The DTW distance can deal with series of different lengths. 
 
 ```{r sample, echo=FALSE, fig.align="center", cache=TRUE, out.width="600px"}
 knitr::include_graphics("figures/dtw.png")
@@ -125,8 +125,8 @@ Figure from @Sarda-Espinosa2017
 ```{r opt_path, echo=FALSE, fig.align="center", cache=TRUE, out.width="300px"}
 knitr::include_graphics("figures/dtw_alignment.png")
 ```
-- The figure shows the optimum path found (corresponding to previous figure).  
-- The square in the center represents the $lcm$ created for these specific series.
+- The figure shows the optimum path found (corresponding to the previous figure).  
+- The square in the centre represents the $lcm$ created for these specific series.
 
 ---
 
@@ -173,7 +173,7 @@ distances = pdc_configs(type = "distance",
 ## What are Time-series Prototypes?
 
 - All series within a cluster should be similar to each other.
-- One time-series should effectively summarize the most important characteristics of all series in a given cluster.
+- One time series should effectively summarize the most important characteristics of all series in a given cluster.
 - The distance measure should correspond to the one used by the prototyping function
 - A prototype can be generated (e.g. mean) or a reference time-series is chosen.
 
@@ -185,9 +185,9 @@ knitr::include_graphics("figures/summary_prototypes.png")
 
 ### DTW Barycenter Averaging (DBA)
 
-- DBA requires a series to be used as centroid.
+- DBA requires a series to be used as a centroid.
 - It is an iterative, global method: The order in which the series enter the prototyping function does not affect the outcome. 
-- It can support series with different length directly.
+- It can support series with different lengths directly.
 - It usually begins by randomly selecting one of the series in the data. 
 - On each iteration, the DTW alignment between each series in the cluster $C$ and the centroid is computed. 
 - This is iteratively repeated until a certain number of iterations are reached, or until convergence is assumed. 
@@ -240,7 +240,7 @@ Example for Partitional Clustering, figure from @Alhenak2019.
 - First, $k$ centroids are randomly initialized and assigned to individual clusters. 
 - The distance between all objects in the data and all centroids is calculated.
 - A prototyping function is applied to each cluster to update the corresponding centroid. 
-- Distances and centroids are updated iteratively until a certain number of iterations (via `iter.max`) have elapsed, or no object changes clusters any more. 
+- Distances and centroids are updated iteratively until a certain number of iterations (via `iter.max`) have elapsed, or no object changes clusters anymore. 
 
 ```{r partitional, eval=FALSE} 
 controls = list(partitional = partitional_control(iter.max = 2L, 
@@ -520,5 +520,7 @@ p_type<-ggplot(data=data_long, aes(x=period, y=contribution, color = factor(clus
         panel.grid.major=element_blank())
 p_type
 ```
+
+# It's your turn! `r emo::ji("technologist")` ~20' 
 
 ## References

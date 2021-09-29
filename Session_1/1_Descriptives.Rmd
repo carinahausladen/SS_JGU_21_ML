@@ -32,7 +32,7 @@ In this first module, we will investigate the basics of text mining. You will le
 * What is a readability score?
 * Many text mining/NLP methods need a numeric representation of the text. The starting point for that is a document frequency matrix. 
 * You will also learn about how to (pairwise) compare texts. We will look at one score, namely cosine similarity. 
-* A simple way to analyze whether specific information is available in a text is the key-words in context analysis. 
+* A simple way to analyze whether specific information is available in a text is the keywords in context analysis. 
 
 ## R and quanteda
 * In this tutorial, we will mostly use one package which is called quanteda. 
@@ -40,16 +40,19 @@ In this first module, we will investigate the basics of text mining. You will le
 * The package is designed for applying natural language processing to texts.
 * It is heavily used by political and social scientists.
 
-## Context: Political Speech and Divisivess
-* Now let's have a look at the context:
-* In module 4 we will measure the divisiveness of political speech.
-* For that purpose, we will analyse Plenarprotokolle from the German Bundestag. 
-* The formal explanation on how to measure divisiveness will be given in module 4
-* For now, we will investigate the data.
+
+# Context: Political Speech and Divisiveness
+"Most citizens want a secure country, safe neighborhoods and good schools. 
+These issues do get discussed, of course, but a disproportionate amount of attention goes to issues like abortion, medical marijuana, and other narrow issues that simply do not motivate the great majority." @Fiorina2005, p. 202).
+
+## Context: Political Speech and Divisiveness
+
+- @Ash2017 use floor speeches by Members of the U.S. Congress and find that U.S. Senators spend more time on divisive issues when they are up for election. 
+- In this tutorial, we investigate divisiveness of political speech via Plenarprotokolle from the German Bundestag. 
 
 ## Data
 To increase computational speed, the data consists only of 5 protocols from the [German Bundestag](https://www.bundestag.de/services/opendata).
-I downloaded the .xml files and transformed them to using a Python script to .txt (`xml_to_txt.py`) beforehand. Then we add all .txt documents in the `data/prtkll/19WP` to our corpus.
+I downloaded the .xml files and transformed them to using a Python script to .txt (`xml_to_txt.py`) beforehand. 
 
 ```{r rd_df, include=TRUE, cache=TRUE}
 temp = list.files(path="data/prtkll/19WP",pattern="*.txt")
@@ -62,12 +65,11 @@ df = do.call(rbind, lapply(temp, function(x) readtext(paste("data/prtkll/19WP/",
 ## Types, tokens, sentences
 [Stanford Encyclopedia of Philosophy](https://plato.stanford.edu/entries/types-tokens/)
 
-* "The distinction between a type and its tokens is an ontological one between a general sort of thing and its particular concrete instances. [...]"
 * From "Sacred Emily", by Gertrude Stein:
 **Rose is a rose is a rose is a rose.**
 * Includes three different types.
 * Includes ten different tokens.
-* C. S. Peirce (1931-58, sec. 4.537) called words in the first sense "types" and words in the second sense "tokens".
+
 ```{r tkns, include=TRUE, cache=TRUE}
 corpus.both<-corpus(df)
 s<-summary(corpus.both)
@@ -81,7 +83,7 @@ Readability is the ease with which a reader can understand a written text.
 We will look at one particular score, namely the Flesch's Reading Ease (FRE) Score [@Flesch1948].
 
 ### Characteristics
-- Uses a combination of syllables and sentence length to indicate complexity of speech
+- Uses a combination of syllables and sentence length to indicate the complexity of speech
 - Optimized for English
 - The higher the FRE value, the easier the text
 
@@ -108,9 +110,10 @@ readability<-textstat_readability(corpus.both, "Flesch")
 ```
 The lowest readability score is `r round(min(readability$Flesch), digits = 2)`, the highest is `r round(max(readability$Flesch), digits = 2)`.
 
-### 
+---
+ 
 A high readability score is driven by a high number of sentences (which implies short sentences) as well as by a high number of syllables per word.
-```{r rdblty_plt,echo=FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3,fig.show='hold',fig.align='center', cache = TRUE}
+```{r rdblty_plt, echo=FALSE, fig.width=3, fig.height=3,fig.show='hold',fig.align='center', cache = TRUE}
 syllable<-nsyllable(tokens(corpus.both)) #function needs a token object
 syllables<-c() #create empty vector
 for(i in 1:length(syllable)){
@@ -126,11 +129,10 @@ plot(s$Sentences,readability$Flesch,
      ylab = "Readability")
 ```
 
-## Document Frequency Matrix and Cosine Similarity
+## Document Frequency Matrix
 
-### Document Frequency Matrix
 * A document-feature matrix (dfm) shows the documents in the rows, the features in the columns.
-* Can be interpreted as the implementation of the bag-of-words concept (more about that later).
+* It can be interpreted as the implementation of the bag-of-words concept (more about that later).
 * It often builds the basis for further NLP methods, such as classification.
 * The dfm, sorted in a decreasing (increasing) way, shows the most (least) common tokens.
 * The sparsity of a dfm denotes the proportion of $0$ in the matrix. Dfms can become quite large and sparse.
@@ -144,9 +146,7 @@ both.dfm<-dfm(tokens(corpus.both),
 head(dfm_sort(both.dfm, decreasing = TRUE))
 ```
 
----
-
-### Cosine Similarity
+## Cosine Similarity
 - The cosine similarity $k$ is the cosine of the angle between vectors.
 - It quantifies the similarity between two or more vectors.
 - The more similar the frequencies, the smaller the angle between the vectors.
@@ -156,18 +156,19 @@ $$
 k(x,y))=\frac{xy^T}{||x|| ||y||}
 $$
 
+---
+
 ### Cosine Similarity Applied
 * A reference document is selected by chance.
-* The matrix shows that the second document is very similar to the reference document.
 * Usually, we are interested in document similarities for a corpus of documents. 
 * Therefore, scaling methods (which we will encounter in module 3) are preferred over pairwise similarity measures like cosine similarity.
 ```{r csne, include=TRUE, cache = TRUE}
 textstat_simil(both.dfm, method = "cosine", margin = "documents")
 ```
 
-# Dictionary, summary statistics and key words in context
+# Dictionary, summary statistics and keywords in context
 
-## Dictionary
+## Dictionary to capture divisiveness
 The dictionary is based on @Ash2017[ appendix, p.22].
 It includes 19 words that denote divisive issues as well as 19 words and bigrams that denote common-values issues.
 ```{r dctnry, include=TRUE, cache=TRUE}
@@ -229,4 +230,7 @@ tokensNgramsNoStopwords <- tokens_ngrams(tokensNoStopwords, 2)
 print(tail(sort(featnames(dfm(tokensNgramsNoStopwords, verbose = FALSE)))))
 }
 ```
+
 ## References
+
+# It's your turn! `r emo::ji("technologist")` ~10' 

@@ -46,7 +46,7 @@ summary(nytfrontpage, 5)
 ```
 
 ```{r construct_corpus, include=FALSE, cache=TRUE}
-#The category "Arts and Entertainment" (category 23) only has 4 entries and is therefore excluded from the corpus. If I included this category, the classifier would assign high weights to those words that are in the texts assigned to this small category. As soon as the same words appear in a text that actually is assigned to another category the classifier would be very likely to assign this text to the wrong category. 
+#The category "Arts and Entertainment" (category 23) only has 4 entries and is therefore excluded from the corpus. If I included this category, the classifier would assign high weights to those words that are in the texts assigned to this small category. As soon as the same words appear in a text that is assigned to another category the classifier would be very likely to assign this text to the wrong category. 
 
 topicareas <- as.numeric(names(table(nytfrontpage$majortopic)[table(nytfrontpage$majortopic)>10]))
 nytfrontpage2 <- subset(nytfrontpage, nytfrontpage$majortopic %in% topicareas)
@@ -119,8 +119,6 @@ dfmat_test <- dfm_subset(dfmt_nyt, !id_numeric %in% train)
 
 - A Naive Bayesian classifier  makes a simplifying (naive) assumption about how the features interact.
 - We represent a text document as if it was a bag-of-words.
-- "I love this movie" and "I would recommend it" --> "I" occurred 2 times, "movie" 1 time, ...
-- NB is a probabilistic classifier.
 
 ---
 
@@ -139,7 +137,7 @@ tmod_nb <- textmodel_nb(dfmat_training, dfmat_training$majortopic)
 
 - The diagonal elements of a confusion matrix represent the number of points for which the predicted label is equal to the true label.
 - The off-diagonal elements are those that are mislabeled by the classifier. 
-- The higher the diagonal values of the confusion matrix the better, indicating many correct predictions.
+- The higher the diagonal values of the confusion matrix the better.
 
 ```{r cnfsn_mtrx, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
 dfmat_matched <- dfm_match(dfmat_test, features = featnames(dfmat_training))
@@ -149,17 +147,15 @@ conftable <- table(actual_class, predicted_class)
 conftable[1:10,1:10]
 ```
 
----
-
-We can also use the function `confusionMatrix()` to assess the performance of the classification.
-```{r cnfsn_mtrx_kable, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+```{r cnfsn_mtrx_kable, include=FALSE, error=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+#We can also use the function `confusionMatrix()` to assess the performance of the classification.
 kable(round(confusionMatrix(conftable)[["overall"]], digits=2))
 ```
 
 ## Metrics
 
 - In order to evaluate the classifier, we calculate the metrics accuracy, precision and recall.
-- Accuracy measures the fraction of all predictions that are correct.
+- Accuracy measures the fraction of all correct predictions.
 - Precision: Out of the documents that the model predicts as category "Defense", what is the fraction actually in the category "Defense"? 
 - Recall: What is fraction of documents in the category "Defense" that is correctly identified? 
 
@@ -237,7 +233,7 @@ for(i in 1:length(d$samplesize)){
 ## Is the trainingset balanced?
 
 The barplot shows that the trainingset is heavily unbalanced.
-The categories are far away from being uniformly distributed nor are the category sizes in the sample the same size as in the original data set.
+The categories are far away from being uniformly distributed nor are the category sizes in the sample of the same size as in the original data set.
 
 ```{r split, echo=FALSE,fig.align='center', cache=TRUE}
 tss<-as.data.frame(as.matrix(table(nytfrontpage2$majortopic)/sum(table(nytfrontpage2$majortopic))))
@@ -344,4 +340,6 @@ for(q in 1:2){
 }
 ```
 
-# References
+## References
+
+# It's your turn! `r emo::ji("technologist")` ~10' 
