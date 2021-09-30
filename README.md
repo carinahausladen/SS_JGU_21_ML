@@ -143,7 +143,7 @@ This is an application-based course, focusing on R and Python as programming lan
     * Text preprocessing ([Stemming, Lemmatization](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html))
     * Train/Test split
     * [Feature extraction](https://scikit-learn.org/stable/modules/feature_extraction.html)
-  * Classification :teacher: 10', :technologist: 10'
+  * Classification :teacher: 15', :technologist: 15'
     * [Multinomial Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html#multinomial-naive-bayes) 
     * [Passive Aggressive Algorithms](https://scikit-learn.org/stable/modules/linear_model.html#passive-aggressive-algorithms)
     * [Support Vector Machines](https://scikit-learn.org/stable/modules/svm.html#classification)
