@@ -521,6 +521,6 @@ p_type<-ggplot(data=data_long, aes(x=period, y=contribution, color = factor(clus
 p_type
 ```
 
-# It's your turn! `r emo::ji("technologist")` ~20' 
+# It's your turn! `r emo::ji("technologist")` ~15' 
 
 ## References

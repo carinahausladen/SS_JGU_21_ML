@@ -231,6 +231,6 @@ print(tail(sort(featnames(dfm(tokensNgramsNoStopwords, verbose = FALSE)))))
 }
 ```
 
-## References
-
 # It's your turn! `r emo::ji("technologist")` ~10' 
+
+## References

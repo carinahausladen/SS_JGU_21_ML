@@ -14199,7 +14199,7 @@ X: if the keywords tax* and/or risk* were found, 15 words before and after the k
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Recurrent-Convolutional-Neural-Networks">Recurrent Convolutional Neural Networks<a class="anchor-link" href="#Recurrent-Convolutional-Neural-Networks">&#182;</a></h2><p><a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewPaper/9745">Lai et al. (2015)</a> <br>
+<h2 id="Recurrent-Convolutional-Neural-Networks">Recurrent Convolutional Neural Networks<a class="anchor-link" href="#Recurrent-Convolutional-Neural-Networks">&#182;</a></h2><p><a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewFile/9745/9552">Lai et al. (2015)</a> <br>
 RCNN improve upon RecursiveNN, RecurrentNN, and CNNs.</p>
 
 </div>
@@ -14229,9 +14229,7 @@ RCNN improve upon RecursiveNN, RecurrentNN, and CNNs.</p>
 <li>Weak in capturing the semantics of a whole document (because key components could appear anywhere in a document rather than at the end).</li>
 </ul>
 </li>
-<li>A recurrent cell can be viewed as multiple feedforward cells which propagate their output through time steps:</li>
 </ul>
-<p><img src="figures/recurrent_cell.png" alt="mlp" width="500"/></p>
 
 </div>
 </div></section><section>
@@ -14252,31 +14250,41 @@ RCNN improve upon RecursiveNN, RecurrentNN, and CNNs.</p>
 </ul>
 </li>
 </ul>
+<p><img src="figures/CNN.png" alt="mlp" width="500"/></p>
+<p><a href="https://arxiv.org/pdf/1408.5882.pdf">Kim (2014)</a></p>
 
 </div>
-</div>
+</div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Can we learn more contextual information than conventional window-based neural networks and represent the semantic of texts more precisely?</p>
 
 </div>
-</div></section><section data-background-iframe="https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewFile/9745/9552"
-          data-background-interactive>
+</div></section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="RCNN">RCNN<a class="anchor-link" href="#RCNN">&#182;</a></h3><ul>
-<li>Bi-directional recurrent structure<ul>
-<li>Introduces less noise compared to a traditional window-based neural network.</li>
-<li>Captures the contextual information when learning word representations. </li>
-<li>Reserves a larger range of the word ordering when learning representations of texts. </li>
-</ul>
-</li>
-<li>The max-pooling layer automatically judges which features play key roles in text classification.</li>
-<li>Time complexity is $O(n)$</li>
-</ul>
-
+<h3 id="RCNN">RCNN<a class="anchor-link" href="#RCNN">&#182;</a></h3>
 </div>
-</div></section></section><section><section>
+</div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">-</span> <span class="n">Bi</span><span class="o">-</span><span class="n">directional</span> <span class="n">recurrent</span> <span class="n">structure</span>
+    <span class="o">-</span> <span class="n">Introduces</span> <span class="n">less</span> <span class="n">noise</span> <span class="n">compared</span> <span class="n">to</span> <span class="n">a</span> <span class="n">traditional</span> <span class="n">window</span><span class="o">-</span><span class="n">based</span> <span class="n">neural</span> <span class="n">network</span><span class="o">.</span>
+    <span class="o">-</span> <span class="n">Captures</span> <span class="n">the</span> <span class="n">contextual</span> <span class="n">information</span> <span class="n">when</span> <span class="n">learning</span> <span class="n">word</span> <span class="n">representations</span><span class="o">.</span> 
+    <span class="o">-</span> <span class="n">Reserves</span> <span class="n">a</span> <span class="n">larger</span> <span class="nb">range</span> <span class="n">of</span> <span class="n">the</span> <span class="n">word</span> <span class="n">ordering</span> <span class="n">when</span> <span class="n">learning</span> <span class="n">representations</span> <span class="n">of</span> <span class="n">texts</span><span class="o">.</span> 
+<span class="o">-</span> <span class="n">The</span> <span class="nb">max</span><span class="o">-</span><span class="n">pooling</span> <span class="n">layer</span> <span class="n">automatically</span> <span class="n">judges</span> <span class="n">which</span> <span class="n">features</span> <span class="n">play</span> <span class="n">key</span> <span class="n">roles</span> <span class="ow">in</span> <span class="n">text</span> <span class="n">classification</span><span class="o">.</span>
+<span class="o">-</span> <span class="n">Time</span> <span class="n">complexity</span> <span class="ow">is</span> <span class="err">$</span><span class="n">O</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="err">$</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div></div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h3 id="Read-Data">Read Data<a class="anchor-link" href="#Read-Data">&#182;</a></h3>
@@ -14324,7 +14332,8 @@ RCNN improve upon RecursiveNN, RecurrentNN, and CNNs.</p>
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Build-Model">Build Model<a class="anchor-link" href="#Build-Model">&#182;</a></h3>
+<h3 id="Build-Model">Build Model<a class="anchor-link" href="#Build-Model">&#182;</a></h3><p>🤓: Understand and change the parameters for generating your RCNN.</p>
+
 </div>
 </div><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
@@ -14520,7 +14529,7 @@ Accuracy on test set:  0.964536726474762
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[29]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;y2&quot;</span><span class="p">,</span> <span class="s2">&quot;y3&quot;</span><span class="p">]:</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;y2&quot;</span><span class="p">]:</span>
     <span class="n">ConfusionMatrixDisplay</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="s2">&quot;RCNN&quot;</span><span class="p">][</span><span class="s2">&quot;confusion_matrix&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 
@@ -14592,7 +14601,7 @@ Accuracy on test set:  0.964536726474762
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[30]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ConfusionMatrixDisplay</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;y1&quot;</span><span class="p">][</span><span class="s2">&quot;RCNN&quot;</span><span class="p">][</span><span class="s2">&quot;confusion_matrix&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ConfusionMatrixDisplay</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;y3&quot;</span><span class="p">][</span><span class="s2">&quot;RCNN&quot;</span><span class="p">][</span><span class="s2">&quot;confusion_matrix&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 
      </div>
@@ -14690,7 +14699,7 @@ Accuracy on test set:  0.964536726474762
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="It's-your-turn!-%F0%9F%A7%91%E2%80%8D%F0%9F%92%BB-~7'">It's your turn! &#129489;&#8205;&#128187; ~7'<a class="anchor-link" href="#It's-your-turn!-%F0%9F%A7%91%E2%80%8D%F0%9F%92%BB-~7'">&#182;</a></h1>
+<h1 id="It's-your-turn!-%F0%9F%A7%91%E2%80%8D%F0%9F%92%BB-~10'">It's your turn! &#129489;&#8205;&#128187; ~10'<a class="anchor-link" href="#It's-your-turn!-%F0%9F%A7%91%E2%80%8D%F0%9F%92%BB-~10'">&#182;</a></h1>
 </div>
 </div></section></section>
 </div>

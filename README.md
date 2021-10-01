@@ -183,8 +183,8 @@ This is an application-based course, focusing on R and Python as programming lan
 ## :fox_face: Quiz time! 15'
 
  # Session 4
-* Parallelization :teacher: 5'
-* Scoring :teacher: 10', :technologist: 10'
+* Parallelization :teacher: 5', :technologist: 5'
+* Scoring :teacher: 7', :technologist: 7'
   * [Accuracy, precision, recall, f1-score, AUC](https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics)
   * Evaluate within and across datasets ([Straube (2014)](https://www.frontiersin.org/articles/10.3389/fncom.2014.00043/full))
     
@@ -192,14 +192,14 @@ This is an application-based course, focusing on R and Python as programming lan
 ## Ideological Direction in Judicial Opinion
 :chart_with_upwards_trend: US Circuit Court judicial decisions
 * Programming language: Python (mostly [scikit-learn](https://scikit-learn.org/stable/))
-* Presentation: [Hausladen et al. 2020](https://www.sciencedirect.com/science/article/pii/S0144818819303667) :teacher: 15'
-* Methods: [Probability calibration](https://scikit-learn.org/stable/modules/calibration.html#) :teacher: 7', :technologist: 10'
+* Presentation: [Hausladen et al. 2020](https://www.sciencedirect.com/science/article/pii/S0144818819303667) :teacher: 10'
+* Methods: [Probability calibration](https://scikit-learn.org/stable/modules/calibration.html#) :teacher: 7', :technologist: 7'
 
 ## Further Techniques
-* Sentiment Analysis with LSTM :teacher: 10', :technologist: 10'
-* RCNN ([Lai et al. (2015)](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewPaper/9745)) :teacher: 8', :technologist: 10'
+* Sentiment Analysis with LSTM :teacher: 7', :technologist: 7'
+* RCNN ([Lai et al. (2015)](https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/viewPaper/9745)) :teacher: 7', :technologist: 7'
 
-## :fox_face: Quiz time! 5'
+## :fox_face: Quiz time! 10'
 
 # Session 5
 
@@ -207,8 +207,8 @@ This is an application-based course, focusing on R and Python as programming lan
 
 :chart_with_upwards_trend: simulated decision data from a multi-stage public good game
 * Programming language: R (mostly [dtw clust](https://cran.r-project.org/web/packages/dtwclust/dtwclust.pdf))
-* Presentation: Chapter 3 of my [dissertation](https://kups.ub.uni-koeln.de/12231/) :teacher: 15'
-* Methods ([Sarda-Espinosa (2017)](https://mran.microsoft.com/snapshot/2018-07-24/web/packages/dtwclust/vignettes/dtwclust.pdf)) :teacher: 20', :technologist: 20'
+* Presentation: Chapter 3 of my [dissertation](https://kups.ub.uni-koeln.de/12231/) :teacher: 10'
+* Methods ([Sarda-Espinosa (2017)](https://mran.microsoft.com/snapshot/2018-07-24/web/packages/dtwclust/vignettes/dtwclust.pdf)) :teacher: 20', :technologist: 15'
     * distance measures (dtw, sdtw)
     * prototypes (dba)
     * clustering algorithms (hierarchical, partitional)
@@ -223,7 +223,9 @@ This is an application-based course, focusing on R and Python as programming lan
   * Topic Models ([NFM](https://scikit-learn.org/stable/modules/decomposition.html#non-negative-matrix-factorization-nmf-or-nnmf), [LDA](https://scikit-learn.org/stable/modules/decomposition.html#latent-dirichlet-allocation-lda))
 
 ## :fox_face: Quiz time! 15'           
-    
+
+# Let's recap! :teacher: 3'
+
 # Acknowledgements
 
 I want to thank the following people who have directly or indirectly contributed to this course: 
