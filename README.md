@@ -1,10 +1,6 @@
-I will add course material, data, and code in the upcoming days. Please make sure to pull on Thursday morning (September 30th) again, I might have added incremental changes to code.
-
 # Preparation
 
 ## Install software
-### Reach out!
-If you encounter any problems with installing the software, please reach out to me! You can contact me via mail (carina.hausladen@gess.ethz.ch), from the 27ths onwards you can also find me in my office at JGU at Johann Joachim Becher Weg 31.
 
 ### Project setup
 Copy this project to your local machine. I recommend [to set up git](https://github.com/git-guides/install-git) and use the following commands (Windows: PowerShell/git bash; macOS: Terminal) to clone this project to your local machine and navigate to the project directory:
